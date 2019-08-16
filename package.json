@@ -1,8 +1,8 @@
 {
   "name": "witnet-requests",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Witnet Requests Lib",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/witnet/witnet-requests-js",
   "author": "Witnet Foundation",
   "license": "MIT",
