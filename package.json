@@ -1,0 +1,10 @@
+{
+  "name": "witnet-requests",
+  "version": "0.1.0",
+  "description": "Witnet Requests Lib",
+  "main": "index.js",
+  "repository": "https://github.com/witnet/witnet-requests-js",
+  "author": "Witnet Foundation",
+  "license": "MIT",
+  "private": false
+}
