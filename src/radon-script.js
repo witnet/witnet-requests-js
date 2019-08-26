@@ -1,3 +1,5 @@
+import { PSEUDOTYPES, TYPES, typeSystem } from "./radon-types";
+
 class Script {
   constructor (firstType) {
     this.script = []

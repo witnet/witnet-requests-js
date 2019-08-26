@@ -1,3 +1,5 @@
+import { typeFormat } from "./radon-types";
+
 class Request {
   constructor () {
     this.data = {
