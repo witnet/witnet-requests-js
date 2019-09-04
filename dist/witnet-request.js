@@ -78,8 +78,8 @@ function () {
       return this;
     }
   }, {
-    key: "compile",
-    value: function compile(witnesses, backup, commitFee, revealFee, tallyFee) {
+    key: "asJson",
+    value: function asJson(witnesses, backup, commitFee, revealFee, tallyFee) {
       return {
         data_request: this.data,
         witnesses: witnesses,

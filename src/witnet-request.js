@@ -50,7 +50,7 @@ class Request {
     this.data.notBefore = timestamp
     return this
   }
-  compile (witnesses, backup, commitFee, revealFee, tallyFee) {
+  asJson (witnesses, backup, commitFee, revealFee, tallyFee) {
     return {
       data_request: this.data,
       witnesses,
