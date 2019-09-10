@@ -1,4 +1,4 @@
-import { PSEUDOTYPES, TYPES, typeSystem } from "./radon-types";
+import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./radon-types";
 
 class Script {
   constructor (firstType) {

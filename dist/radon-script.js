@@ -83,7 +83,7 @@ function () {
 
           _this.lastType = nextType;
         } else {
-          console.error("Method ".concat(typeFormat(lastType), "::").concat(operator, " is not implemented"));
+          console.error("Method ".concat((0, _radonTypes.typeFormat)(lastType), "::").concat(operator, " is not implemented"));
         }
 
         return _this.proxy;
