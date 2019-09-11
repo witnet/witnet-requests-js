@@ -3,7 +3,7 @@ import { TYPES } from "./radon-types"
 
 class Source extends Script {
   constructor (url) {
-    super([TYPES.BYTES])
+    super([TYPES.STRING])
     this.url = url
   }
 }

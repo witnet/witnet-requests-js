@@ -41,7 +41,7 @@ function (_Script) {
 
     _classCallCheck(this, Source);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Source).call(this, [_radonTypes.TYPES.BYTES]));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Source).call(this, [_radonTypes.TYPES.STRING]));
     _this.url = url;
     return _this;
   }
