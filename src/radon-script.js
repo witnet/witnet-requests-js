@@ -1,5 +1,14 @@
 import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./radon-types";
 
+function unpackArgs(args) {
+  return args.map((arg) => {
+    if (arg instanceof Script) {
+      arg = arg.script
+    }
+    return arg
+  })
+}
+
 class Script {
   constructor (firstType) {
     this.script = []
@@ -16,6 +25,7 @@ class Script {
 
   apply (operator) {
     return (...args) => {
+      args = unpackArgs(args)
       let lastType = this.lastType
       const next = typeSystem[lastType[0]][operator]
       if (next !== undefined) {

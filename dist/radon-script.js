@@ -23,6 +23,16 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function unpackArgs(args) {
+  return args.map(function (arg) {
+    if (arg instanceof Script) {
+      arg = arg.script;
+    }
+
+    return arg;
+  });
+}
+
 var Script =
 /*#__PURE__*/
 function () {
@@ -45,6 +55,11 @@ function () {
       var _this = this;
 
       return function () {
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        args = unpackArgs(args);
         var lastType = _this.lastType;
         var next = _radonTypes.typeSystem[lastType[0]][operator];
 
