@@ -20,14 +20,22 @@ function () {
     _classCallCheck(this, Request);
 
     this.data = {
-      notBefore: Math.floor(Date.now() / 1000),
-      retrieve: [],
-      aggregate: {
-        script: []
+      data_request: {
+        not_before: Math.floor(Date.now() / 1000),
+        retrieve: [],
+        aggregate: {
+          script: []
+        },
+        tally: {
+          script: []
+        }
       },
-      tally: {
-        script: []
-      }
+      value: 0,
+      witnesses: 2,
+      backup_witnesses: 1,
+      commit_fee: 0,
+      reveal_fee: 0,
+      tally_fee: 0
     };
     this.lastTypes = {
       retrieve: [],
@@ -39,7 +47,7 @@ function () {
   _createClass(Request, [{
     key: "addSource",
     value: function addSource(source) {
-      this.data.retrieve.push({
+      this.data.data_request.retrieve.push({
         url: source.url,
         script: source.script
       });
@@ -60,34 +68,43 @@ function () {
   }, {
     key: "setAggregator",
     value: function setAggregator(aggregator) {
-      this.data.aggregate.script = aggregator.script;
+      this.data.data_request.aggregate.script = aggregator.script;
       this.lastTypes.aggregate = aggregator.lastType;
       return this;
     }
   }, {
     key: "setTally",
     value: function setTally(tally) {
-      this.data.tally.script = tally.script;
+      this.data.data_request.tally.script = tally.script || this.data.data_request.tally.script;
       this.lastTypes.tally = tally.lastType;
+      return this;
+    }
+  }, {
+    key: "setQuorum",
+    value: function setQuorum(witnesses, backup_witnesses) {
+      this.data.witnesses = witnesses || this.data.witnesses;
+      this.data.backup_witnesses = backup_witnesses || this.data.backup_witnesses;
+      return this;
+    }
+  }, {
+    key: "setFees",
+    value: function setFees(reward, commit_fee, reveal_fee, tally_fee) {
+      this.data.value = reward || this.data.value;
+      this.data.commit_fee = commit_fee || this.data.commit_fee;
+      this.data.reveal_fee = reveal_fee || this.data.reveal_fee;
+      this.data.tally_fee = tally_fee || this.data.tally_fee;
       return this;
     }
   }, {
     key: "schedule",
     value: function schedule(timestamp) {
-      this.data.notBefore = timestamp;
+      this.data.data_request.not_before = timestamp || this.data.data_request.not_before;
       return this;
     }
   }, {
     key: "asJson",
-    value: function asJson(witnesses, backup, commitFee, revealFee, tallyFee) {
-      return {
-        data_request: this.data,
-        witnesses: witnesses,
-        backup: backup,
-        commit_fee: commitFee || 0,
-        reveal_fee: revealFee || 0,
-        tally_fee: tallyFee || 0
-      };
+    value: function asJson() {
+      return this.data;
     }
   }]);
 
