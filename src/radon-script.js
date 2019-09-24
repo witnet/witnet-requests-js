@@ -38,7 +38,7 @@ class Script {
           nextType = [this.lastType[1]]
         } else if (nextType[0] === PSEUDOTYPES.ARGUMENT) {
           // Take the return type from the arguments
-          let firstBranch = args[0][0][1]
+          let firstBranch = Object.values(args[0])[0]
           nextType = [{
             "number": TYPES.FLOAT,
             "string": TYPES.STRING,

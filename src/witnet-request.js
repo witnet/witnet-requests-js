@@ -4,7 +4,7 @@ class Request {
   constructor () {
     this.data = {
       data_request: {
-        not_before: Math.floor(Date.now() / 1000),
+        time_lock: Math.floor(Date.now() / 1000),
         retrieve: [],
         aggregate: {
           script: [],
@@ -67,7 +67,7 @@ class Request {
     return this
   }
   schedule (timestamp) {
-    this.data.data_request.not_before = timestamp || this.data.data_request.not_before
+    this.data.data_request.time_lock = timestamp || this.data.data_request.time_lock
     return this
   }
   asJson () {

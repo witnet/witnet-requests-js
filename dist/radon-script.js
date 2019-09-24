@@ -85,7 +85,7 @@ function () {
             nextType = [_this.lastType[1]];
           } else if (nextType[0] === _radonTypes.PSEUDOTYPES.ARGUMENT) {
             // Take the return type from the arguments
-            var firstBranch = args[0][0][1];
+            var firstBranch = Object.values(args[0])[0];
             nextType = [{
               "number": _radonTypes.TYPES.FLOAT,
               "string": _radonTypes.TYPES.STRING,
