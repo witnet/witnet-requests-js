@@ -59,7 +59,7 @@ function (_Script2) {
   function Aggregator(sources) {
     _classCallCheck(this, Aggregator);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Aggregator).call(this, [_radonTypes.TYPES.ARRAY, _radonTypes.TYPES.RESULT].concat(_toConsumableArray(sources[0].lastType))));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Aggregator).call(this, [_radonTypes.TYPES.ARRAY].concat(_toConsumableArray(sources[0].lastType))));
   }
 
   return Aggregator;
@@ -75,7 +75,7 @@ function (_Script3) {
   function Tally(aggregate) {
     _classCallCheck(this, Tally);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Tally).call(this, [_radonTypes.TYPES.ARRAY, _radonTypes.TYPES.RESULT].concat(_toConsumableArray(aggregate.lastType))));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Tally).call(this, [_radonTypes.TYPES.ARRAY].concat(_toConsumableArray(aggregate.lastType))));
   }
 
   return Tally;

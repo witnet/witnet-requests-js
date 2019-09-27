@@ -10,13 +10,13 @@ class Source extends Script {
 
 class Aggregator extends Script {
   constructor (sources) {
-    super([TYPES.ARRAY, TYPES.RESULT, ...sources[0].lastType])
+    super([TYPES.ARRAY, ...sources[0].lastType])
   }
 }
 
 class Tally extends Script {
   constructor (aggregate) {
-    super([TYPES.ARRAY, TYPES.RESULT, ...aggregate.lastType])
+    super([TYPES.ARRAY, ...aggregate.lastType])
   }
 }
 
