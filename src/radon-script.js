@@ -24,8 +24,8 @@ class Script {
   }
 
   apply (operator) {
-    return (...args) => {
-      args = unpackArgs(args)
+    return (...rawArgs) => {
+      const args = unpackArgs(rawArgs)
       let lastType = this.lastType
       const next = typeSystem[lastType[0]][operator]
       if (next !== undefined) {
@@ -35,8 +35,8 @@ class Script {
         this.script.push(nextCall)
         if (nextType[0] === PSEUDOTYPES.INNER) {
           // Unwrap the inner type
-          nextType = [this.lastType[1]]
-        } else if (nextType[0] === PSEUDOTYPES.ARGUMENT) {
+          nextType = this.lastType.slice(1)
+        } else if (nextType[0] === PSEUDOTYPES.MATCH) {
           // Take the return type from the arguments
           let firstBranch = Object.values(args[0])[0]
           nextType = [{
@@ -45,6 +45,8 @@ class Script {
             "boolean": TYPES.BOOLEAN,
             "undefined": undefined,
           }[typeof firstBranch] || TYPES.BYTES]
+        } else if (nextType[0] === PSEUDOTYPES.SUBSCRIPT) {
+          nextType = [lastType[0], ...rawArgs[0].lastType]
         } else if (nextType[1] === PSEUDOTYPES.PASSTHROUGH) {
           // Pop up the innermost type
           nextType = [this.lastType[0], this.lastType[2]]

@@ -13,8 +13,9 @@ const TYPES = {
 // Pseudo-type names
 const PSEUDOTYPES = {
   INNER: "Inner",
-  ARGUMENT: "Argument",
+  MATCH: "Match",
   PASSTHROUGH: "Passthrough",
+  SUBSCRIPT: "Subscript",
 }
 
 const REDUCERS = {
@@ -52,7 +53,7 @@ const FILTERS = {
 
 const typeSystem = {
   [TYPES.BOOLEAN]: {
-    match: [0x10, [PSEUDOTYPES.ARGUMENT]],
+    match: [0x10, [PSEUDOTYPES.MATCH]],
     negate: [0x11, [TYPES.BOOLEAN]],
     asString: [0x12, [TYPES.STRING]],
   },
@@ -63,7 +64,7 @@ const typeSystem = {
     asString: [0x23, [TYPES.STRING]],
     greaterThan: [0x24, [TYPES.BOOLEAN]],
     lessThan: [0x25, [TYPES.BOOLEAN]],
-    match: [0x26, [PSEUDOTYPES.ARGUMENT]],
+    match: [0x26, [PSEUDOTYPES.MATCH]],
     modulo: [0x27, [TYPES.INTEGER]],
     multiply: [0x28, [TYPES.INTEGER]],
     negate: [0x29, [TYPES.INTEGER]],
@@ -93,7 +94,7 @@ const typeSystem = {
     asFloat: [0x41, [TYPES.FLOAT]],
     asInteger: [0x42, [TYPES.INTEGER]],
     length: [0x43, [TYPES.INTEGER]],
-    match: [0x44, [PSEUDOTYPES.ARGUMENT]],
+    match: [0x44, [PSEUDOTYPES.MATCH]],
     parseJSON: [0x45, [TYPES.BYTES]],
     parseXML: [0x46, [TYPES.MAP]],
     asBoolean: [0x47, [TYPES.BOOLEAN]],
@@ -107,7 +108,7 @@ const typeSystem = {
     filter: [0x53, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
     flatten: [0x54, [TYPES.ARRAY, PSEUDOTYPES.PASSTHROUGH]],
     get: [0x55, [PSEUDOTYPES.INNER]],
-    map: [0x56, [PSEUDOTYPES.ARGUMENT]],
+    map: [0x56, [PSEUDOTYPES.SUBSCRIPT]],
     reduce: [0x57, [PSEUDOTYPES.INNER]],
     some: [0x58, [TYPES.BOOLEAN]],
     sort: [0x59, [TYPES.ARRAY, PSEUDOTYPES.INNER]],

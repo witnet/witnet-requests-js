@@ -63,11 +63,11 @@ function () {
       var _this = this;
 
       return function () {
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len = arguments.length, rawArgs = new Array(_len), _key = 0; _key < _len; _key++) {
+          rawArgs[_key] = arguments[_key];
         }
 
-        args = unpackArgs(args);
+        var args = unpackArgs(rawArgs);
         var lastType = _this.lastType;
         var next = _radonTypes.typeSystem[lastType[0]][operator];
 
@@ -82,8 +82,8 @@ function () {
 
           if (nextType[0] === _radonTypes.PSEUDOTYPES.INNER) {
             // Unwrap the inner type
-            nextType = [_this.lastType[1]];
-          } else if (nextType[0] === _radonTypes.PSEUDOTYPES.ARGUMENT) {
+            nextType = _this.lastType.slice(1);
+          } else if (nextType[0] === _radonTypes.PSEUDOTYPES.MATCH) {
             // Take the return type from the arguments
             var firstBranch = Object.values(args[0])[0];
             nextType = [{
@@ -92,6 +92,8 @@ function () {
               "boolean": _radonTypes.TYPES.BOOLEAN,
               "undefined": undefined
             }[_typeof(firstBranch)] || _radonTypes.TYPES.BYTES];
+          } else if (nextType[0] === _radonTypes.PSEUDOTYPES.SUBSCRIPT) {
+            nextType = [lastType[0]].concat(_toConsumableArray(rawArgs[0].lastType));
           } else if (nextType[1] === _radonTypes.PSEUDOTYPES.PASSTHROUGH) {
             // Pop up the innermost type
             nextType = [_this.lastType[0], _this.lastType[2]];
