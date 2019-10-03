@@ -72,9 +72,10 @@ function () {
         var next = _radonTypes.typeSystem[lastType[0]][operator];
 
         if (next !== undefined) {
-          var _next = _slicedToArray(next, 2),
-              nextOpCode = _next[0],
-              nextType = _next[1];
+          var _JSON$parse = JSON.parse(JSON.stringify(next)),
+              _JSON$parse2 = _slicedToArray(_JSON$parse, 2),
+              nextOpCode = _JSON$parse2[0],
+              nextType = _JSON$parse2[1];
 
           var nextCall = args.length > 0 ? [nextOpCode].concat(_toConsumableArray(args)) : nextOpCode;
 
@@ -99,7 +100,7 @@ function () {
             nextType = [_this.lastType[0], _this.lastType[2]];
           } else if (nextType[1] === _radonTypes.PSEUDOTYPES.INNER) {
             // Pass down the inner type
-            nextType[1] = _this.lastType[1];
+            nextType = [nextType[0]].concat(_toConsumableArray(_this.lastType.slice(1)));
           }
 
           _this.lastType = nextType;

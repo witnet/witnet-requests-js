@@ -29,7 +29,7 @@ class Script {
       let lastType = this.lastType
       const next = typeSystem[lastType[0]][operator]
       if (next !== undefined) {
-        let [nextOpCode, nextType] = next
+        let [nextOpCode, nextType] = JSON.parse(JSON.stringify(next))
         let nextCall = args.length > 0 ? [nextOpCode, ...args] : nextOpCode
 
         this.script.push(nextCall)
@@ -52,7 +52,7 @@ class Script {
           nextType = [this.lastType[0], this.lastType[2]]
         } else if (nextType[1] === PSEUDOTYPES.INNER) {
           // Pass down the inner type
-          nextType[1] = this.lastType[1]
+          nextType = [nextType[0], ...this.lastType.slice(1)]
         }
         this.lastType = nextType
       } else {
