@@ -121,10 +121,10 @@ var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.BOOLEAN, 
   sort: [0x59, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
   take: [0x5A, [TYPES.ARRAY, PSEUDOTYPES.INNER]]
 }), _defineProperty(_typeSystem, TYPES.MAP, {
-  entries: [0x60, [TYPES.ARRAY, TYPES.BYTES]],
+  entries: [0x60, [TYPES.ARRAY, TYPES.ARRAY, PSEUDOTYPES.BYTES]],
   get: [0x61, [PSEUDOTYPES.INNER]],
-  keys: [0x62, [TYPES.STRING]],
-  values: [0x63, [PSEUDOTYPES.INNER]]
+  keys: [0x62, [TYPES.ARRAY, TYPES.STRING]],
+  values: [0x63, [TYPES.ARRAY, PSEUDOTYPES.INNER]]
 }), _defineProperty(_typeSystem, TYPES.BYTES, {
   asArray: [0x70, [TYPES.ARRAY, TYPES.BYTES]],
   asBoolean: [0x71, [TYPES.BOOLEAN]],

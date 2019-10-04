@@ -115,10 +115,10 @@ const typeSystem = {
     take: [0x5A, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
   },
   [TYPES.MAP]: {
-    entries: [0x60, [TYPES.ARRAY, TYPES.BYTES]],
+    entries: [0x60, [TYPES.ARRAY, TYPES.ARRAY, PSEUDOTYPES.BYTES]],
     get: [0x61, [PSEUDOTYPES.INNER]],
-    keys: [0x62, [TYPES.STRING]],
-    values: [0x63, [PSEUDOTYPES.INNER]],
+    keys: [0x62, [TYPES.ARRAY, TYPES.STRING]],
+    values: [0x63, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
   },
   [TYPES.BYTES]: {
     asArray: [0x70, [TYPES.ARRAY, TYPES.BYTES]],
