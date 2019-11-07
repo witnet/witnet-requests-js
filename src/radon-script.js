@@ -11,34 +11,34 @@ function unpackArgs(args) {
 
 class Script {
   constructor (firstType) {
-    this.script = []
-    this.lastType = firstType
+    this.script = [];
+    this.lastType = firstType;
 
     this.proxy = new Proxy(this, {
       get (target, propKey) {
         return target[propKey] || target.apply(propKey)
       },
-    })
+    });
 
     return this.proxy
   }
 
   apply (operator) {
     return (...rawArgs) => {
-      const args = unpackArgs(rawArgs)
-      let lastType = this.lastType
-      const next = typeSystem[lastType[0]][operator]
+      const args = unpackArgs(rawArgs);
+      let lastType = this.lastType;
+      const next = typeSystem[lastType[0]][operator];
       if (next !== undefined) {
-        let [nextOpCode, nextType] = JSON.parse(JSON.stringify(next))
-        let nextCall = args.length > 0 ? [nextOpCode, ...args] : nextOpCode
+        let [nextOpCode, nextType] = JSON.parse(JSON.stringify(next));
+        let nextCall = args.length > 0 ? [nextOpCode, ...args] : nextOpCode;
 
-        this.script.push(nextCall)
+        this.script.push(nextCall);
         if (nextType[0] === PSEUDOTYPES.INNER) {
           // Unwrap the inner type
           nextType = this.lastType.slice(1)
         } else if (nextType[0] === PSEUDOTYPES.MATCH) {
           // Take the return type from the arguments
-          let firstBranch = Object.values(args[0])[0]
+          let firstBranch = Object.values(args[0])[0];
           nextType = [{
             "number": TYPES.FLOAT,
             "string": TYPES.STRING,

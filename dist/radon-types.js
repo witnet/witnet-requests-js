@@ -19,9 +19,9 @@ var TYPES = {
   ARRAY: "Array",
   MAP: "Map",
   BYTES: "Bytes",
-  RESULT: "Result" // Pseudo-type names
+  RESULT: "Result"
+}; // Pseudo-type names
 
-};
 exports.TYPES = TYPES;
 var PSEUDOTYPES = {
   INNER: "Inner",

@@ -8,7 +8,7 @@ const TYPES = {
   MAP: "Map",
   BYTES: "Bytes",
   RESULT: "Result",
-}
+};
 
 // Pseudo-type names
 const PSEUDOTYPES = {
@@ -16,7 +16,7 @@ const PSEUDOTYPES = {
   MATCH: "Match",
   PASSTHROUGH: "Passthrough",
   SUBSCRIPT: "Subscript",
-}
+};
 
 const REDUCERS = {
   min: 0x00,
@@ -30,7 +30,7 @@ const REDUCERS = {
   deviationAverage: 0x08,
   deviationMedian: 0x09,
   deviationMaximum: 0x0A,
-}
+};
 
 const FILTERS = {
   greaterThan: 0x00,
@@ -49,7 +49,7 @@ const FILTERS = {
   notDeviationStandard: 0x85,
   notTop: 0x86,
   notBottom: 0x87,
-}
+};
 
 const typeSystem = {
   [TYPES.BOOLEAN]: {
@@ -134,7 +134,7 @@ const typeSystem = {
     getOr: [0x81, [PSEUDOTYPES.INNER]],
     isOk: [0x82, [TYPES.BOOLEAN]],
   },
-}
+};
 
 // Helper function that helps pretty-printing RADON types
 function typeFormat (type) {
