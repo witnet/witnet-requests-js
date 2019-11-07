@@ -33,6 +33,7 @@ function () {
       value: 0,
       witnesses: 2,
       backup_witnesses: 1,
+      extra_reveal_rounds: 1,
       commit_fee: 0,
       reveal_fee: 0,
       tally_fee: 0
@@ -81,9 +82,10 @@ function () {
     }
   }, {
     key: "setQuorum",
-    value: function setQuorum(witnesses, backup_witnesses) {
+    value: function setQuorum(witnesses, backup_witnesses, extra_reveal_rounds) {
       this.data.witnesses = witnesses || this.data.witnesses;
       this.data.backup_witnesses = backup_witnesses || this.data.backup_witnesses;
+      this.data.extra_reveal_rounds = extra_reveal_rounds || this.data.extra_reveal_rounds;
       return this;
     }
   }, {
