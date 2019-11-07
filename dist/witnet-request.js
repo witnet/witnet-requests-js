@@ -104,6 +104,11 @@ function () {
       return this;
     }
   }, {
+    key: "setTimestamp",
+    value: function setTimestamp(timestamp) {
+      return this.schedule(timestamp);
+    }
+  }, {
     key: "asJson",
     value: function asJson() {
       return this.data;

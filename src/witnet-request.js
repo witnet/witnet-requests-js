@@ -72,6 +72,9 @@ class Request {
     this.data.data_request.time_lock = timestamp || this.data.data_request.time_lock
     return this
   }
+  setTimestamp (timestamp) {
+    return this.schedule(timestamp)
+  }
   asJson () {
     return this.data
   }
