@@ -6,42 +6,42 @@ Object.defineProperty(exports, "__esModule", {
 Object.defineProperty(exports, "Script", {
   enumerable: true,
   get: function get() {
-    return _radonScript.Script;
+    return _script.Script;
   }
 });
 Object.defineProperty(exports, "Source", {
   enumerable: true,
   get: function get() {
-    return _witnetStages.Source;
+    return _stages.Source;
   }
 });
 Object.defineProperty(exports, "Aggregator", {
   enumerable: true,
   get: function get() {
-    return _witnetStages.Aggregator;
+    return _stages.Aggregator;
   }
 });
 Object.defineProperty(exports, "Tally", {
   enumerable: true,
   get: function get() {
-    return _witnetStages.Tally;
+    return _stages.Tally;
   }
 });
 Object.defineProperty(exports, "Request", {
   enumerable: true,
   get: function get() {
-    return _witnetRequest.Request;
+    return _request.Request;
   }
 });
 exports.Types = exports.TYPES = void 0;
 
-var _radonScript = require("./radon-script");
+var _script = require("./radon/script");
 
-var _witnetStages = require("./witnet-stages");
+var _stages = require("./witnet/stages");
 
-var _witnetRequest = require("./witnet-request");
+var _request = require("./witnet/request");
 
-var Types = _interopRequireWildcard(require("./radon-types"));
+var Types = _interopRequireWildcard(require("./radon/types"));
 
 exports.Types = Types;
 

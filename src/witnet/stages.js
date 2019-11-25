@@ -1,5 +1,5 @@
-import { Script } from "./radon-script"
-import { TYPES } from "./radon-types"
+import { Script } from "../radon/script"
+import { TYPES } from "../radon/types"
 
 class Source extends Script {
   constructor (url) {

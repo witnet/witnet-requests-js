@@ -1,4 +1,4 @@
-import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./radon-types";
+import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./types";
 
 function unpackArgs(args) {
   return args.map((arg) => {

@@ -1,4 +1,4 @@
-import { typeFormat } from "./radon-types";
+import { typeFormat } from "../radon/types";
 
 class Request {
   constructor () {
