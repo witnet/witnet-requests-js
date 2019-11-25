@@ -43,6 +43,6 @@ Promise.all(steps.reduce(
   requestNames.map(fileName => Promise.resolve(fileName))))
   .then(requestsSucceed)
   .then(migrationsBanner)
-  .then(() => writeMigrations(contractNames, migrationsDir, fs))
+  .then(() => writeMigrations(contractNames, userContractsDir, migrationsDir, fs))
   .then(migrationsSucceed)
   .catch(fail);

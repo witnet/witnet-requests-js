@@ -62,5 +62,5 @@ Promise.all(steps.reduce(function (prev, step) {
 }, requestNames.map(function (fileName) {
   return Promise.resolve(fileName);
 }))).then(requestsSucceed).then(migrationsBanner).then(function () {
-  return writeMigrations(contractNames, migrationsDir, fs);
+  return writeMigrations(contractNames, userContractsDir, migrationsDir, fs);
 }).then(migrationsSucceed)["catch"](fail);
