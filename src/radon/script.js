@@ -1,3 +1,4 @@
+import * as CBOR from "cbor"
 import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./types";
 
 function unpackArgs(args) {
@@ -61,6 +62,10 @@ class Script {
 
       return this.proxy
     }
+  }
+
+  encode () {
+    return CBOR.encode(this.script)
   }
 }
 

@@ -28,10 +28,7 @@ class Request {
     }
   }
   addSource (source) {
-    this.data.data_request.retrieve.push({
-      url: source.url,
-      script: source.script,
-    });
+    this.data.data_request.retrieve.push(source);
 
     if (this.lastTypes.retrieve.length > 0) {
       const aTypeSig = typeFormat(this.lastTypes.retrieve);
@@ -46,12 +43,12 @@ class Request {
     return this
   }
   setAggregator (aggregator) {
-    this.data.data_request.aggregate.script = aggregator.script;
+    this.data.data_request.aggregate = aggregator || this.data.data_request.aggregate;
     this.lastTypes.aggregate = aggregator.lastType;
     return this
   }
   setTally (tally) {
-    this.data.data_request.tally.script = tally.script || this.data.data_request.tally.script;
+    this.data.data_request.tally = tally || this.data.data_request.tally;
     this.lastTypes.tally = tally.lastType;
     return this
   }

@@ -48,10 +48,7 @@ function () {
   _createClass(Request, [{
     key: "addSource",
     value: function addSource(source) {
-      this.data.data_request.retrieve.push({
-        url: source.url,
-        script: source.script
-      });
+      this.data.data_request.retrieve.push(source);
 
       if (this.lastTypes.retrieve.length > 0) {
         var aTypeSig = (0, _types.typeFormat)(this.lastTypes.retrieve);
@@ -69,14 +66,14 @@ function () {
   }, {
     key: "setAggregator",
     value: function setAggregator(aggregator) {
-      this.data.data_request.aggregate.script = aggregator.script;
+      this.data.data_request.aggregate = aggregator || this.data.data_request.aggregate;
       this.lastTypes.aggregate = aggregator.lastType;
       return this;
     }
   }, {
     key: "setTally",
     value: function setTally(tally) {
-      this.data.data_request.tally.script = tally.script || this.data.data_request.tally.script;
+      this.data.data_request.tally = tally || this.data.data_request.tally;
       this.lastTypes.tally = tally.lastType;
       return this;
     }
