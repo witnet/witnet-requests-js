@@ -13,10 +13,11 @@ class Request {
           script: [],
         },
       },
-      value: 0,
+      witness_reward: 0,
       witnesses: 2,
       backup_witnesses: 1,
       extra_reveal_rounds: 1,
+      min_consensus_percentage: 51,
       commit_fee: 0,
       reveal_fee: 0,
       tally_fee: 0,
@@ -58,8 +59,8 @@ class Request {
     this.data.extra_reveal_rounds = extra_reveal_rounds || this.data.extra_reveal_rounds;
     return this
   }
-  setFees (reward, commit_fee, reveal_fee, tally_fee) {
-    this.data.value = reward || this.data.value;
+  setFees (witness_reward, commit_fee, reveal_fee, tally_fee) {
+    this.data.witness_reward = reward || this.data.witness_reward;
     this.data.commit_fee = commit_fee || this.data.commit_fee;
     this.data.reveal_fee = reveal_fee || this.data.reveal_fee;
     this.data.tally_fee = tally_fee || this.data.tally_fee;
