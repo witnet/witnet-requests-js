@@ -27,7 +27,6 @@ const steps = [
   path => { console.log(`> Compiling ${path}`); return path },
   path => readFile(path, fs),
   compile,
-  //tap,
   (code, i) => execute(code, requestNames[i], process.env.PWD, vm),
   pack,
   (request) => intoProtoBuf(request, schema),
