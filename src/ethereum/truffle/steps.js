@@ -123,8 +123,8 @@ export function pack (dro) {
   const retrieve = request.retrieve.map((branch) => {
     return { ...branch, script: branch.encode() }
   });
-  const aggregate = { ...request.aggregate, script: request.aggregate.encode() };
-  const tally = { ...request.tally, script: request.tally.encode() };
+  const aggregate = request.aggregate.pack();
+  const tally = request.tally.pack();
 
   return { ...dro.data, data_request: { ...request, retrieve, aggregate, tally } }
 }

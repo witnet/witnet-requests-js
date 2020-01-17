@@ -15,11 +15,13 @@ class Script {
     this.script = [];
     this.lastType = firstType;
 
-    this.proxy = new Proxy(this, {
+    let proxy = new Proxy(this, {
       get (target, propKey) {
         return target[propKey] || target.apply(propKey)
       },
     });
+
+    Object.defineProperty(this, "proxy", { value: proxy });
 
     return this.proxy
   }
@@ -48,7 +50,9 @@ class Script {
           }[typeof firstBranch] || TYPES.BYTES]
         } else if (nextType[0] === PSEUDOTYPES.SUBSCRIPT) {
           nextType = [lastType[0], ...rawArgs[0].lastType]
-        } else if (nextType[1] === PSEUDOTYPES.PASSTHROUGH) {
+        } else if (nextType[0] === PSEUDOTYPES.SAME) {
+          nextType = lastType
+        } else if (nextType[1] === PSEUDOTYPES.SAME) {
           // Pop up the innermost type
           nextType = [this.lastType[0], this.lastType[2]]
         } else if (nextType[1] === PSEUDOTYPES.INNER) {
@@ -70,5 +74,5 @@ class Script {
 }
 
 export {
-  Script
+  Script,
 }
