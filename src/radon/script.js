@@ -61,7 +61,10 @@ class Script {
         }
         this.lastType = nextType
       } else {
-        console.error(`Method ${typeFormat(lastType)}::${operator} is not implemented`)
+        throw TypeError(`Method \`${typeFormat(lastType)}::${operator}()\` does not exist.\
+        \nAvailable \`${typeFormat(lastType)}\` methods are:${Object.entries(typeSystem[lastType]).map(([opName, opInfo]) => {
+          return `\n\t- ${opName}(): ${typeFormat(opInfo[1])}`
+        }).join(``)}`)
       }
 
       return this.proxy
