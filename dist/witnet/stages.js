@@ -5,17 +5,25 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Tally = exports.Source = exports.Aggregator = void 0;
 
+var CBOR = _interopRequireWildcard(require("cbor"));
+
 var _script = require("../radon/script");
 
 var _types = require("../radon/types");
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -51,34 +59,76 @@ function (_Script) {
 
 exports.Source = Source;
 
+var Joiner =
+/*#__PURE__*/
+function () {
+  function Joiner(filters, reducer) {
+    _classCallCheck(this, Joiner);
+
+    this.filters = filters;
+    this.reducer = reducer;
+  }
+
+  _createClass(Joiner, [{
+    key: "pack",
+    value: function pack() {
+      return {
+        filters: this.filters.map(function (_ref) {
+          var _ref2 = _toArray(_ref),
+              op = _ref2[0],
+              raw_args = _ref2.slice(1);
+
+          var raw_args_len = raw_args.length;
+          var args = raw_args_len > 0 ? raw_args_len > 1 ? raw_args : raw_args[0] : [];
+          return {
+            op: op,
+            args: CBOR.encode(args)
+          };
+        }),
+        reducer: this.reducer
+      };
+    }
+  }]);
+
+  return Joiner;
+}();
+
 var Aggregator =
 /*#__PURE__*/
-function (_Script2) {
-  _inherits(Aggregator, _Script2);
+function (_Joiner) {
+  _inherits(Aggregator, _Joiner);
 
-  function Aggregator(sources) {
+  function Aggregator(_ref3) {
+    var _ref3$filters = _ref3.filters,
+        filters = _ref3$filters === void 0 ? [] : _ref3$filters,
+        reducer = _ref3.reducer;
+
     _classCallCheck(this, Aggregator);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Aggregator).call(this, [_types.TYPES.ARRAY].concat(_toConsumableArray(sources[0].lastType))));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Aggregator).call(this, filters, reducer));
   }
 
   return Aggregator;
-}(_script.Script);
+}(Joiner);
 
 exports.Aggregator = Aggregator;
 
 var Tally =
 /*#__PURE__*/
-function (_Script3) {
-  _inherits(Tally, _Script3);
+function (_Joiner2) {
+  _inherits(Tally, _Joiner2);
 
-  function Tally(aggregate) {
+  function Tally(_ref4) {
+    var _ref4$filters = _ref4.filters,
+        filters = _ref4$filters === void 0 ? [] : _ref4$filters,
+        reducer = _ref4.reducer;
+
     _classCallCheck(this, Tally);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Tally).call(this, [_types.TYPES.ARRAY].concat(_toConsumableArray(aggregate.lastType))));
+    return _possibleConstructorReturn(this, _getPrototypeOf(Tally).call(this, filters, reducer));
   }
 
   return Tally;
-}(_script.Script);
+}(Joiner);
 
 exports.Tally = Tally;

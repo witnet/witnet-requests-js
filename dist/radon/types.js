@@ -24,9 +24,10 @@ var TYPES = {
 
 exports.TYPES = TYPES;
 var PSEUDOTYPES = {
+  ANY: "Any",
   INNER: "Inner",
   MATCH: "Match",
-  PASSTHROUGH: "Passthrough",
+  SAME: "Same",
   SUBSCRIPT: "Subscript"
 };
 exports.PSEUDOTYPES = PSEUDOTYPES;
@@ -63,80 +64,89 @@ var FILTERS = {
   notBottom: 0x87
 };
 exports.FILTERS = FILTERS;
-var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.BOOLEAN, {
-  match: [0x10, [PSEUDOTYPES.MATCH]],
-  negate: [0x11, [TYPES.BOOLEAN]],
-  asString: [0x12, [TYPES.STRING]]
-}), _defineProperty(_typeSystem, TYPES.INTEGER, {
-  absolute: [0x20, [TYPES.INTEGER]],
-  asBytes: [0x21, [TYPES.BYTES]],
-  asFloat: [0x22, [TYPES.FLOAT]],
-  asString: [0x23, [TYPES.STRING]],
-  greaterThan: [0x24, [TYPES.BOOLEAN]],
-  lessThan: [0x25, [TYPES.BOOLEAN]],
-  match: [0x26, [PSEUDOTYPES.MATCH]],
-  modulo: [0x27, [TYPES.INTEGER]],
-  multiply: [0x28, [TYPES.INTEGER]],
-  negate: [0x29, [TYPES.INTEGER]],
-  power: [0x2A, [TYPES.INTEGER]],
-  reciprocal: [0x2B, [TYPES.FLOAT]],
-  sum: [0x2C, [TYPES.INTEGER]]
-}), _defineProperty(_typeSystem, TYPES.FLOAT, {
-  absolute: [0x30, [TYPES.INTEGER]],
-  asBytes: [0x31, [TYPES.BYTES]],
-  asString: [0x32, [TYPES.STRING]],
-  ceiling: [0x33, [TYPES.INTEGER]],
-  graterThan: [0x34, [TYPES.BOOLEAN]],
-  floor: [0x35, [TYPES.INTEGER]],
-  lessThan: [0x36, [TYPES.BOOLEAN]],
-  modulo: [0x37, [TYPES.FLOAT]],
-  multiply: [0x38, [TYPES.FLOAT]],
-  negate: [0x39, [TYPES.FLOAT]],
-  power: [0x3A, [TYPES.FLOAT]],
-  reciprocal: [0x3B, [TYPES.FLOAT]],
-  round: [0x3C, [TYPES.INTEGER]],
-  sum: [0x3D, [TYPES.FLOAT]],
-  truncate: [0x3E, [TYPES.INTEGER]]
-}), _defineProperty(_typeSystem, TYPES.STRING, {
-  asBytes: [0x40, [TYPES.BYTES]],
-  asFloat: [0x41, [TYPES.FLOAT]],
-  asInteger: [0x42, [TYPES.INTEGER]],
-  length: [0x43, [TYPES.INTEGER]],
-  match: [0x44, [PSEUDOTYPES.MATCH]],
-  parseJSON: [0x45, [TYPES.BYTES]],
-  parseXML: [0x46, [TYPES.MAP]],
-  asBoolean: [0x47, [TYPES.BOOLEAN]],
-  toLowerCase: [0x48, [TYPES.STRING]],
-  toUpperCase: [0x49, [TYPES.STRING]]
+var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.ANY, {
+  identity: [0x00, [PSEUDOTYPES.SAME]]
 }), _defineProperty(_typeSystem, TYPES.ARRAY, {
-  asBytes: [0x50, [TYPES.BYTES]],
-  count: [0x51, [TYPES.INTEGER]],
-  every: [0x52, [TYPES.BOOLEAN]],
-  filter: [0x53, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
-  flatten: [0x54, [TYPES.ARRAY, PSEUDOTYPES.PASSTHROUGH]],
-  get: [0x55, [PSEUDOTYPES.INNER]],
-  map: [0x56, [PSEUDOTYPES.SUBSCRIPT]],
-  reduce: [0x57, [PSEUDOTYPES.INNER]],
-  some: [0x58, [TYPES.BOOLEAN]],
-  sort: [0x59, [TYPES.ARRAY, PSEUDOTYPES.INNER]],
-  take: [0x5A, [TYPES.ARRAY, PSEUDOTYPES.INNER]]
-}), _defineProperty(_typeSystem, TYPES.MAP, {
-  entries: [0x60, [TYPES.ARRAY, TYPES.ARRAY, PSEUDOTYPES.BYTES]],
-  get: [0x61, [PSEUDOTYPES.INNER]],
-  keys: [0x62, [TYPES.ARRAY, TYPES.STRING]],
-  values: [0x63, [TYPES.ARRAY, PSEUDOTYPES.INNER]]
+  count: [0x10, [TYPES.INTEGER]],
+  filter: [0x11, [PSEUDOTYPES.SAME]],
+  flatten: [0x12, [PSEUDOTYPES.INNER]],
+  getArray: [0x13, [PSEUDOTYPES.INNER]],
+  getBoolean: [0x14, [TYPES.BOOLEAN]],
+  getBytes: [0x15, [TYPES.BYTES]],
+  getInteger: [0x16, [TYPES.INTEGER]],
+  getFloat: [0x17, [TYPES.FLOAT]],
+  getMap: [0x18, [TYPES.MAP]],
+  getString: [0x19, [TYPES.STRING]],
+  map: [0x1A, [PSEUDOTYPES.SUBSCRIPT]],
+  reduce: [0x1B, [PSEUDOTYPES.INNER]],
+  some: [0x1C, [TYPES.BOOLEAN]],
+  sort: [0x1D, [PSEUDOTYPES.SAME]],
+  take: [0x1E, [PSEUDOTYPES.SAME]]
+}), _defineProperty(_typeSystem, TYPES.BOOLEAN, {
+  asString: [0x20, [TYPES.STRING]],
+  match: [0x21, [PSEUDOTYPES.MATCH]],
+  negate: [0x22, [TYPES.BOOLEAN]]
 }), _defineProperty(_typeSystem, TYPES.BYTES, {
-  asArray: [0x70, [TYPES.ARRAY, TYPES.BYTES]],
-  asBoolean: [0x71, [TYPES.BOOLEAN]],
+  asString: [0x30, [TYPES.STRING]],
+  hash: [0x31, [TYPES.BYTES]]
+}), _defineProperty(_typeSystem, TYPES.INTEGER, {
+  absolute: [0x40, [TYPES.INTEGER]],
+  asFloat: [0x41, [TYPES.FLOAT]],
+  asString: [0x42, [TYPES.STRING]],
+  greaterThan: [0x43, [TYPES.BOOLEAN]],
+  lessThan: [0x44, [TYPES.BOOLEAN]],
+  match: [0x45, [PSEUDOTYPES.MATCH]],
+  modulo: [0x46, [TYPES.INTEGER]],
+  multiply: [0x47, [TYPES.INTEGER]],
+  negate: [0x48, [TYPES.INTEGER]],
+  power: [0x49, [TYPES.INTEGER]],
+  reciprocal: [0x4A, [TYPES.FLOAT]],
+  sum: [0x4B, [TYPES.INTEGER]]
+}), _defineProperty(_typeSystem, TYPES.FLOAT, {
+  absolute: [0x50, [TYPES.FLOAT]],
+  asString: [0x51, [TYPES.STRING]],
+  ceiling: [0x52, [TYPES.INTEGER]],
+  greaterThan: [0x53, [TYPES.BOOLEAN]],
+  floor: [0x54, [TYPES.INTEGER]],
+  lessThan: [0x55, [TYPES.BOOLEAN]],
+  modulo: [0x56, [TYPES.FLOAT]],
+  multiply: [0x57, [TYPES.FLOAT]],
+  negate: [0x58, [TYPES.FLOAT]],
+  power: [0x59, [TYPES.FLOAT]],
+  reciprocal: [0x5A, [TYPES.FLOAT]],
+  round: [0x5B, [TYPES.INTEGER]],
+  sum: [0x5C, [TYPES.FLOAT]],
+  truncate: [0x5d, [TYPES.INTEGER]]
+}), _defineProperty(_typeSystem, TYPES.MAP, {
+  // `entries` needs to be deprecated
+  entries: [0x60, [PSEUDOTYPES.SAME]],
+  getArray: [0x61, [TYPES.ARRAY]],
+  getBoolean: [0x62, [TYPES.BOOLEAN]],
+  getBytes: [0x63, [TYPES.BYTES]],
+  getInteger: [0x64, [TYPES.INTEGER]],
+  getFloat: [0x65, [TYPES.FLOAT]],
+  getMap: [0x66, [TYPES.MAP]],
+  getString: [0x67, [TYPES.STRING]],
+  keys: [0x68, [TYPES.ARRAY, TYPES.STRING]],
+  valuesAsArray: [0x69, [TYPES.ARRAY, TYPES.ARRAY]],
+  valuesAsBoolean: [0x6A, [TYPES.ARRAY, TYPES.BOOLEAN]],
+  valuesAsBytes: [0x6B, [TYPES.ARRAY, TYPES.BYTES]],
+  valuesAsInteger: [0x6C, [TYPES.ARRAY, TYPES.INTEGER]],
+  valuesAsFloat: [0x6D, [TYPES.ARRAY, TYPES.FLOAT]],
+  valuesAsMap: [0x6E, [TYPES.ARRAY, TYPES.MAP]],
+  valuesAsString: [0x6F, [TYPES.ARRAY, TYPES.STRING]]
+}), _defineProperty(_typeSystem, TYPES.STRING, {
+  asBoolean: [0x70, [TYPES.BOOLEAN]],
+  asBytes: [0x71, [TYPES.BYTES]],
   asFloat: [0x72, [TYPES.FLOAT]],
   asInteger: [0x73, [TYPES.INTEGER]],
-  asMap: [0x74, [TYPES.MAP, TYPES.BYTES]],
-  asString: [0x75, [TYPES.STRING]],
-  hash: [0x75, [TYPES.BYTES]]
-}), _defineProperty(_typeSystem, TYPES.RESULT, {
-  get: [0x80, [PSEUDOTYPES.INNER]],
-  getOr: [0x81, [PSEUDOTYPES.INNER]],
-  isOk: [0x82, [TYPES.BOOLEAN]]
+  length: [0x74, [TYPES.INTEGER]],
+  match: [0x75, [PSEUDOTYPES.MATCH]],
+  parseArrayJSON: [0x76, [TYPES.ARRAY]],
+  parseMapJSON: [0x77, [TYPES.MAP]],
+  parseXML: [0x78, [TYPES.MAP]],
+  toLowerCase: [0x79, [TYPES.STRING]],
+  toUpperCase: [0x7A, [TYPES.STRING]]
 }), _typeSystem); // Helper function that helps pretty-printing RADON types
 
 exports.typeSystem = typeSystem;

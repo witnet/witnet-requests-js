@@ -40,8 +40,7 @@ var steps = [function (fileName) {
   return path;
 }, function (path) {
   return readFile(path, fs);
-}, compile, //tap,
-function (code, i) {
+}, compile, function (code, i) {
   return execute(code, requestNames[i], process.env.PWD, vm);
 }, pack, function (request) {
   return intoProtoBuf(request, schema);

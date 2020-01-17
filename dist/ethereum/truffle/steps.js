@@ -156,15 +156,8 @@ function pack(dro) {
       script: branch.encode()
     });
   });
-
-  var aggregate = _objectSpread({}, request.aggregate, {
-    script: request.aggregate.encode()
-  });
-
-  var tally = _objectSpread({}, request.tally, {
-    script: request.tally.encode()
-  });
-
+  var aggregate = request.aggregate.pack();
+  var tally = request.tally.pack();
   return _objectSpread({}, dro.data, {
     data_request: _objectSpread({}, request, {
       retrieve: retrieve,

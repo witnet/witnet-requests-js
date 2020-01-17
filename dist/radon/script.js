@@ -53,10 +53,13 @@ function () {
 
     this.script = [];
     this.lastType = firstType;
-    this.proxy = new Proxy(this, {
+    var proxy = new Proxy(this, {
       get: function get(target, propKey) {
         return target[propKey] || target.apply(propKey);
       }
+    });
+    Object.defineProperty(this, "proxy", {
+      value: proxy
     });
     return this.proxy;
   }
@@ -99,7 +102,9 @@ function () {
             }[_typeof(firstBranch)] || _types.TYPES.BYTES];
           } else if (nextType[0] === _types.PSEUDOTYPES.SUBSCRIPT) {
             nextType = [lastType[0]].concat(_toConsumableArray(rawArgs[0].lastType));
-          } else if (nextType[1] === _types.PSEUDOTYPES.PASSTHROUGH) {
+          } else if (nextType[0] === _types.PSEUDOTYPES.SAME) {
+            nextType = lastType;
+          } else if (nextType[1] === _types.PSEUDOTYPES.SAME) {
             // Pop up the innermost type
             nextType = [_this.lastType[0], _this.lastType[2]];
           } else if (nextType[1] === _types.PSEUDOTYPES.INNER) {
@@ -109,7 +114,13 @@ function () {
 
           _this.lastType = nextType;
         } else {
-          console.error("Method ".concat((0, _types.typeFormat)(lastType), "::").concat(operator, " is not implemented"));
+          throw TypeError("Method `".concat((0, _types.typeFormat)(lastType), "::").concat(operator, "()` does not exist.        \nAvailable `").concat((0, _types.typeFormat)(lastType), "` methods are:").concat(Object.entries(_types.typeSystem[lastType]).map(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 2),
+                opName = _ref2[0],
+                opInfo = _ref2[1];
+
+            return "\n\t- ".concat(opName, "(): ").concat((0, _types.typeFormat)(opInfo[1]));
+          }).join("")));
         }
 
         return _this.proxy;

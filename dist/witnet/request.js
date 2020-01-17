@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Request = void 0;
 
-var _types = require("../radon/types");
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -23,12 +21,8 @@ function () {
       data_request: {
         time_lock: Math.floor(Date.now() / 1000),
         retrieve: [],
-        aggregate: {
-          script: []
-        },
-        tally: {
-          script: []
-        }
+        aggregate: null,
+        tally: null
       },
       value: 0,
       witnesses: 2,
@@ -36,59 +30,49 @@ function () {
       extra_reveal_rounds: 1,
       commit_fee: 0,
       reveal_fee: 0,
-      tally_fee: 0
+      tally_fee: 0,
+      min_consensus_percentage: 51
     };
-    this.lastTypes = {
-      retrieve: [],
-      aggregate: [],
-      tally: []
-    };
+    this.dataPointType = null;
   }
 
   _createClass(Request, [{
     key: "addSource",
     value: function addSource(source) {
       this.data.data_request.retrieve.push(source);
-
-      if (this.lastTypes.retrieve.length > 0) {
-        var aTypeSig = (0, _types.typeFormat)(this.lastTypes.retrieve);
-        var bTypeSig = (0, _types.typeFormat)(source.lastType);
-
-        if (aTypeSig !== bTypeSig) {
-          console.error("Mismatching output types between different retrieve branches:\nA: ".concat(aTypeSig, "\nB: ").concat(bTypeSig));
-        }
-      } else {
-        this.lastTypes.retrieve = source.lastType;
-      }
-
+      this.dataPointType = source.lastType;
       return this;
     }
   }, {
     key: "setAggregator",
     value: function setAggregator(aggregator) {
       this.data.data_request.aggregate = aggregator || this.data.data_request.aggregate;
-      this.lastTypes.aggregate = aggregator.lastType;
       return this;
     }
   }, {
     key: "setTally",
     value: function setTally(tally) {
       this.data.data_request.tally = tally || this.data.data_request.tally;
-      this.lastTypes.tally = tally.lastType;
       return this;
     }
   }, {
     key: "setQuorum",
-    value: function setQuorum(witnesses, backup_witnesses, extra_reveal_rounds) {
+    value: function setQuorum(witnesses, backup_witnesses, extra_reveal_rounds, min_consensus_percentage) {
       this.data.witnesses = witnesses || this.data.witnesses;
       this.data.backup_witnesses = backup_witnesses || this.data.backup_witnesses;
       this.data.extra_reveal_rounds = extra_reveal_rounds || this.data.extra_reveal_rounds;
+
+      if (min_consensus_percentage < 51 || min_consensus_percentage > 99) {
+        throw RangeError("`min_consensus_percentage` needs to be > 50 and < 100");
+      }
+
+      this.data.min_consensus_percentage = min_consensus_percentage || this.data.min_consensus_percentage;
       return this;
     }
   }, {
     key: "setFees",
     value: function setFees(reward, commit_fee, reveal_fee, tally_fee) {
-      this.data.value = reward || this.data.value;
+      this.data.witness_reward = reward || this.data.value;
       this.data.commit_fee = commit_fee || this.data.commit_fee;
       this.data.reveal_fee = reveal_fee || this.data.reveal_fee;
       this.data.tally_fee = tally_fee || this.data.tally_fee;
