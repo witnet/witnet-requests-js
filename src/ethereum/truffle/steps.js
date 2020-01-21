@@ -171,7 +171,7 @@ module.exports = function (deployer, network) {
     WitnetBridgeInterface.address = addresses[network]["WitnetBridgeInterface"]
   } else {
     deployer.deploy(BlockRelay).then(() => {
-      return deployer.deploy(WitnetBridgeInterface, BlockRelay.address)
+      return deployer.deploy(WitnetBridgeInterface, BlockRelay.address, 2)
     })
     deployer.deploy(CBOR)
     deployer.link(CBOR, Witnet)
