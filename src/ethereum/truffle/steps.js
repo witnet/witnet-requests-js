@@ -77,9 +77,7 @@ export function execute (code, requestName, dirName, vm) {
 
   try {
     const request = vm.runInContext(code, context, __dirname);
-    console.log(`  - The final type of the sources is \x1b[36m${Witnet.Types.typeFormat(request.lastTypes.retrieve)}\x1b[0m`);
-    console.log(`  - The final type of the aggregator is \x1b[36m${Witnet.Types.typeFormat(request.lastTypes.aggregate)}\x1b[0m`);
-    console.log(`  - The final type of the tally is \x1b[36m${Witnet.Types.typeFormat(request.lastTypes.tally)}\x1b[0m`);
+    console.log(`  - The result type of the request is \x1b[36m${Witnet.Types.typeFormat(request.dataPointType)}\x1b[0m`);
     return request
   } catch (e) {
     let error = e;

@@ -128,9 +128,7 @@ function execute(code, requestName, dirName, vm) {
 
   try {
     var request = vm.runInContext(code, context, __dirname);
-    console.log("  - The final type of the sources is \x1B[36m".concat(Witnet.Types.typeFormat(request.lastTypes.retrieve), "\x1B[0m"));
-    console.log("  - The final type of the aggregator is \x1B[36m".concat(Witnet.Types.typeFormat(request.lastTypes.aggregate), "\x1B[0m"));
-    console.log("  - The final type of the tally is \x1B[36m".concat(Witnet.Types.typeFormat(request.lastTypes.tally), "\x1B[0m"));
+    console.log("  - The result type of the request is \x1B[36m".concat(Witnet.Types.typeFormat(request.dataPointType), "\x1B[0m"));
     return request;
   } catch (e) {
     var error = e;
