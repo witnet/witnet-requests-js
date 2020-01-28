@@ -7,6 +7,9 @@
   "author": "Witnet Foundation",
   "license": "MIT",
   "private": false,
+  "bin": {
+    "rad2sol": "dist/ethereum/truffle/rad2sol.js"
+  },
   "scripts": {
     "compile": "babel src -d dist"
   },
