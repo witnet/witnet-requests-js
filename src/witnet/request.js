@@ -10,6 +10,7 @@ class Request {
       value: 0,
       witnesses: 2,
       backup_witnesses: 1,
+      extra_commit_rounds: 1,
       extra_reveal_rounds: 1,
       commit_fee: 0,
       reveal_fee: 0,
@@ -34,9 +35,10 @@ class Request {
 
     return this
   }
-  setQuorum (witnesses, backup_witnesses, extra_reveal_rounds, min_consensus_percentage) {
+  setQuorum (witnesses, backup_witnesses, extra_commit_rounds, extra_reveal_rounds, min_consensus_percentage) {
     this.data.witnesses = witnesses || this.data.witnesses;
     this.data.backup_witnesses = backup_witnesses || this.data.backup_witnesses;
+    this.data.extra_commit_rounds = extra_commit_rounds || this.data.extra_commit_rounds;
     this.data.extra_reveal_rounds = extra_reveal_rounds || this.data.extra_reveal_rounds;
 
     if (min_consensus_percentage < 51 || min_consensus_percentage > 99) {
