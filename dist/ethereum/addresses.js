@@ -8,7 +8,7 @@ var rinkeby = {
   BlockRelay: "0xCD835FB8B7359550Cd378f6b048374cE6Da423A8",
   CBOR: "0xD9b64aB025D9bf90c6DF26C14aeEDdc9db631a8c",
   Witnet: "0xAF0E4F49e205337f90F63cDFaBe2c0f0dc68D75F",
-  WitnetBridgeInterface: "0xCfBD4047FeE204f85c2ba4eb965134C5C94654a2"
+  WitnetBridgeInterface: "0xd8A860cD69Ec9E5e4CF4Ec2eb6BA89db667776b5"
 };
 exports.rinkeby = rinkeby;
 var goerli = {
