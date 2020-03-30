@@ -179,7 +179,7 @@ function intoProtoBuf(request, schema) {
 
 function intoSol(hex, fileName) {
   var contractName = fileName.replace(/\.js/, "");
-  return "pragma solidity ^0.5.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () Request(hex\"").concat(hex, "\") public { }\n}\n");
+  return "pragma solidity >=0.5.3 <0.7.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () Request(hex\"").concat(hex, "\") public { }\n}\n");
 }
 
 function writeSol(sol, fileName, requestContractsDir, fs) {

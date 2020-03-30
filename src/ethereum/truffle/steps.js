@@ -134,7 +134,7 @@ export function intoProtoBuf (request, schema) {
 export function intoSol (hex, fileName) {
   const contractName = fileName.replace(/\.js/, "");
 
-  return `pragma solidity ^0.5.0;
+  return `pragma solidity >=0.5.3 <0.7.0;
 
 import "witnet-ethereum-bridge/contracts/Request.sol";
 
