@@ -23,4 +23,4 @@ The Witnet protocol documentation features a complete tutorial on how to
 `witnet-requests-js` is published under the [MIT license][license].
 
 [license]: https://github.com/witnet/witnet-requests-js/blob/master/LICENSE
-[tutorial]: https://witnet.github.io/documentation/try/my-first-data-request/#write-your-first-witnet-request
+[tutorial]: https://docs.witnet.io/tutorials/bitcoin-price-feed/introduction/
