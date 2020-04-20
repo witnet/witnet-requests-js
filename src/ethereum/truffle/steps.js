@@ -102,7 +102,7 @@ explained in issue 1.
     (Node.js error was: ${e})`
       )
     } else if (e.message.includes("is not defined")) {
-      const missing = e.message.match(/(.*) is not defined/)[1]
+      const missing = e.message.match(/(.*) is not defined/)[1];
       if (Witnet.hasOwnProperty(missing)) {
         error = Error(`\x1b[1m${requestName} is missing an import for the \`${missing}\` module\x1b[0m
     Adding this line at the beginning of ${requestName} may help:
@@ -148,6 +148,7 @@ contract ${contractName}Request is Request {
 export function writeSol (sol, fileName, requestContractsDir, fs) {
   const solFileName = fileName.replace(/\.js/, ".sol");
   fs.writeFileSync(`${requestContractsDir}${solFileName}`, sol);
+
   return fileName
 }
 
