@@ -30,6 +30,7 @@ var Request = /*#__PURE__*/function () {
       commit_fee: 0,
       reveal_fee: 0,
       tally_fee: 0,
+      collateral: 1000000000,
       min_consensus_percentage: 51
     };
     this.dataPointType = null;
@@ -67,6 +68,17 @@ var Request = /*#__PURE__*/function () {
       }
 
       this.data.min_consensus_percentage = min_consensus_percentage || this.data.min_consensus_percentage;
+      return this;
+    }
+  }, {
+    key: "setCollateral",
+    value: function setCollateral(collateral) {
+      if (collateral > 1000000000) {
+        this.data.collateral = collateral;
+      } else {
+        this.data.collateral = 1000000000;
+      }
+
       return this;
     }
   }, {

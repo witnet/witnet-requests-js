@@ -15,6 +15,7 @@ class Request {
       commit_fee: 0,
       reveal_fee: 0,
       tally_fee: 0,
+      collateral: 1000000000,
       min_consensus_percentage: 51
     };
     this.dataPointType = null;
@@ -46,6 +47,14 @@ class Request {
     }
     this.data.min_consensus_percentage = min_consensus_percentage || this.data.min_consensus_percentage;
 
+    return this
+  }
+  setCollateral (collateral) {
+    if (collateral > 1000000000){
+      this.data.collateral = collateral;
+    } else {
+      this.data.collateral = 1000000000;
+    }  
     return this
   }
   setFees (reward, commit_fee, reveal_fee, tally_fee) {

@@ -140,6 +140,7 @@ message DataRequestOutput {
     uint32 extra_commit_rounds = 8;
     uint32 extra_reveal_rounds = 9;
     uint32 min_consensus_percentage = 10;
+    uint64 collateral = 11;
 }
 
 message Input {
@@ -169,11 +170,11 @@ message DRTransaction {
 }
 
 message CommitTransactionBody {
-    // TODO: Discussion about collateral
-    // repeated Input collateral = 1;
     Hash dr_pointer = 1;
     Hash commitment = 2;
     DataRequestEligibilityClaim proof = 3;
+    repeated Input collateral = 4;
+    repeated ValueTransferOutput outputs = 5;
 }
 
 message CommitTransaction {
@@ -196,11 +197,13 @@ message TallyTransaction {
     Hash dr_pointer = 1;
     bytes tally = 2;
     repeated ValueTransferOutput outputs = 3;
+    repeated PublicKeyHash slashed_witnesses = 4;
 }
 
 message MintTransaction {
+    // The epoch field is used to ensure that each MintTransaction has a unique hash
     fixed32 epoch = 1;
-    ValueTransferOutput output = 2;
+    repeated ValueTransferOutput outputs = 2;
 }
 
 message Transaction {
@@ -253,6 +256,11 @@ message CheckpointBeacon {
     Hash hash_prev_block = 2;
 }
 
+message CheckpointVRF {
+    fixed32 checkpoint = 1;
+    Hash hash_prev_vrf = 2;
+}
+
 message InventoryEntry {
     oneof kind {
         Hash Block = 1;
@@ -263,13 +271,18 @@ message InventoryEntry {
 message ConsensusConstants {
     int64 checkpoint_zero_timestamp = 1;
     uint32 checkpoints_period = 2;
-    Hash genesis_hash = 3;
-    uint32 max_block_weight = 4;
-    uint32 activity_period = 5;
-    uint32 reputation_expire_alpha_diff = 6;
-    uint32 reputation_issuance = 7;
-    uint32 reputation_issuance_stop = 8;
-    double reputation_penalization_factor = 9;
+    Hash bootstrap_hash = 3;
+    Hash genesis_hash = 4;
+    uint32 max_block_weight = 5;
+    uint32 activity_period = 6;
+    uint32 reputation_expire_alpha_diff = 7;
+    uint32 reputation_issuance = 8;
+    uint32 reputation_issuance_stop = 9;
+    double reputation_penalization_factor = 10;
+    uint32 mining_backup_factor = 11;
+    uint32 mining_replication_factor = 12;
+    uint64 collateral_minimum = 13;
+    uint32 collateral_age = 14;
 }
 
 message VrfProof {
@@ -278,7 +291,7 @@ message VrfProof {
 }
 
 message DataRequestVrfMessage {
-    CheckpointBeacon beacon = 1;
+    CheckpointVRF vrf_input = 1;
     Hash dr_hash = 2;
 }
 
