@@ -24,9 +24,6 @@ var Request = /*#__PURE__*/function () {
       },
       value: 0,
       witnesses: 2,
-      backup_witnesses: 1,
-      extra_commit_rounds: 1,
-      extra_reveal_rounds: 1,
       commit_fee: 0,
       reveal_fee: 0,
       tally_fee: 0,
@@ -57,11 +54,8 @@ var Request = /*#__PURE__*/function () {
     }
   }, {
     key: "setQuorum",
-    value: function setQuorum(witnesses, backup_witnesses, extra_commit_rounds, extra_reveal_rounds, min_consensus_percentage) {
+    value: function setQuorum(witnesses, min_consensus_percentage) {
       this.data.witnesses = witnesses || this.data.witnesses;
-      this.data.backup_witnesses = backup_witnesses || this.data.backup_witnesses;
-      this.data.extra_commit_rounds = extra_commit_rounds || this.data.extra_commit_rounds;
-      this.data.extra_reveal_rounds = extra_reveal_rounds || this.data.extra_reveal_rounds;
 
       if (min_consensus_percentage < 51 || min_consensus_percentage > 99) {
         throw RangeError("`min_consensus_percentage` needs to be > 50 and < 100");
@@ -73,10 +67,10 @@ var Request = /*#__PURE__*/function () {
   }, {
     key: "setCollateral",
     value: function setCollateral(collateral) {
-      if (collateral > 1000000000) {
+      if (collateral >= 1000000000) {
         this.data.collateral = collateral;
       } else {
-        this.data.collateral = 1000000000;
+        throw RangeError("`collateral (in nanoWits)` needs to be >= 1 WIT");
       }
 
       return this;

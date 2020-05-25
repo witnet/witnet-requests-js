@@ -1,6 +1,6 @@
 {
   "name": "witnet-requests",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Witnet Requests Lib",
   "main": "dist/index.js",
   "repository": "https://github.com/witnet/witnet-requests-js",
@@ -11,7 +11,8 @@
     "rad2sol": "dist/ethereum/truffle/rad2sol.js"
   },
   "scripts": {
-    "compile": "babel src -d dist"
+    "build": "babel src -d dist",
+    "compile": "npm run build"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
