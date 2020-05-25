@@ -50,10 +50,10 @@ class Request {
     return this
   }
   setCollateral (collateral) {
-    if (collateral > 1000000000){
+    if (collateral >= 1000000000){
       this.data.collateral = collateral;
     } else {
-      this.data.collateral = 1000000000;
+      throw RangeError("`collateral` needs to be > 1 WIT");
     }  
     return this
   }
