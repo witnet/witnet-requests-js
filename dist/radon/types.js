@@ -142,8 +142,8 @@ var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.ANY, {
   asInteger: [0x73, [TYPES.INTEGER]],
   length: [0x74, [TYPES.INTEGER]],
   match: [0x75, [PSEUDOTYPES.MATCH]],
-  parseArrayJSON: [0x76, [TYPES.ARRAY]],
-  parseMapJSON: [0x77, [TYPES.MAP]],
+  parseJSONArray: [0x76, [TYPES.ARRAY]],
+  parseJSONMap: [0x77, [TYPES.MAP]],
   parseXML: [0x78, [TYPES.MAP]],
   toLowerCase: [0x79, [TYPES.STRING]],
   toUpperCase: [0x7A, [TYPES.STRING]]
