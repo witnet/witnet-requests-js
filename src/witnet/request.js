@@ -9,9 +9,7 @@ class Request {
       },
       value: 0,
       witnesses: 2,
-      commit_fee: 0,
-      reveal_fee: 0,
-      tally_fee: 0,
+      commit_and_reveal_fee: 0,
       collateral: 1000000000,
       min_consensus_percentage: 51
     };
@@ -51,12 +49,9 @@ class Request {
     }  
     return this
   }
-  setFees (reward, commit_fee, reveal_fee, tally_fee) {
+  setFees (reward, commit_and_reveal_fee) {
     this.data.witness_reward = reward || this.data.value;
-    this.data.commit_fee = commit_fee || this.data.commit_fee;
-    this.data.reveal_fee = reveal_fee || this.data.reveal_fee;
-    this.data.tally_fee = tally_fee || this.data.tally_fee;
-
+    this.data.commit_and_reveal_fee = commit_and_reveal_fee || this.data.commit_and_reveal_fee;
     return this
   }
   schedule (timestamp) {

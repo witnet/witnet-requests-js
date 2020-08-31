@@ -51,7 +51,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
@@ -158,14 +158,14 @@ function execute(code, requestName, dirName, vm) {
 function pack(dro) {
   var request = dro.data.data_request;
   var retrieve = request.retrieve.map(function (branch) {
-    return _objectSpread(_objectSpread({}, branch), {}, {
+    return _objectSpread({}, branch, {
       script: branch.encode()
     });
   });
   var aggregate = request.aggregate.pack();
   var tally = request.tally.pack();
-  return _objectSpread(_objectSpread({}, dro.data), {}, {
-    data_request: _objectSpread(_objectSpread({}, request), {}, {
+  return _objectSpread({}, dro.data, {
+    data_request: _objectSpread({}, request, {
       retrieve: retrieve,
       aggregate: aggregate,
       tally: tally
@@ -229,7 +229,7 @@ function readMigrationArgs(migrationsDir, fs) {
   var content = readFile("".concat(migrationsDir, "3_user_contracts.js"), fs);
   var regex = /^\s*(await)?\s*deployer\.deploy\([\s\n]*(\w+)[^)]*\)/mg;
   return matchAll(regex, content).reduce(function (acc, match) {
-    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, match[2], match[0]));
+    return _objectSpread({}, acc, _defineProperty({}, match[2], match[0]));
   }, {});
 }
 
@@ -256,7 +256,7 @@ function mockSolidityArgs(args, artifacts) {
   };
   var simpleArtifactNames = artifacts.reduce(function (acc, artifact) {
     var simpleName = simplifyName(artifact);
-    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, simpleName, artifact));
+    return _objectSpread({}, acc, _defineProperty({}, simpleName, artifact));
   }, {});
   return args.split(",").map(function (arg) {
     var _arg$trim$split = arg.trim().split(" "),

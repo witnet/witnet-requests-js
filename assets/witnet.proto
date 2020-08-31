@@ -14,6 +14,7 @@ message Message {
             InventoryRequest InventoryRequest = 7;
             LastBeacon LastBeacon = 8;
             Transaction Transaction = 9;
+            SuperBlockVote SuperBlockVote = 10;
         }
     }
 
@@ -29,8 +30,8 @@ message Version {
     Address sender_address = 4;
     Address receiver_address = 5;
     string user_agent = 6;
-    fixed32 last_epoch = 7;
-    fixed64 nonce = 8;
+    fixed64 nonce = 7;
+    LastBeacon beacon = 8;
 }
 
 message Verack {
@@ -88,6 +89,7 @@ message InventoryRequest {
 
 message LastBeacon {
     CheckpointBeacon highest_block_checkpoint = 1;
+    CheckpointBeacon highest_superblock_checkpoint = 2;
 }
 
 message OutputPointer {
@@ -134,11 +136,9 @@ message DataRequestOutput {
     RADRequest data_request = 1;
     uint64 witness_reward = 2;
     uint32 witnesses = 3;
-    uint64 commit_fee = 4;
-    uint64 reveal_fee = 5;
-    uint64 tally_fee = 6;
-    uint32 min_consensus_percentage = 7;
-    uint64 collateral = 8;
+    uint64 commit_and_reveal_fee = 4;
+    uint32 min_consensus_percentage = 5;
+    uint64 collateral = 6;
 }
 
 message Input {
@@ -196,7 +196,8 @@ message TallyTransaction {
     Hash dr_pointer = 1;
     bytes tally = 2;
     repeated ValueTransferOutput outputs = 3;
-    repeated PublicKeyHash slashed_witnesses = 4;
+    repeated PublicKeyHash out_of_consensus = 4;
+    repeated PublicKeyHash error_committers = 5;
 }
 
 message MintTransaction {
@@ -285,18 +286,25 @@ message ConsensusConstants {
     uint32 checkpoints_period = 2;
     Hash bootstrap_hash = 3;
     Hash genesis_hash = 4;
-    uint32 max_block_weight = 5;
-    uint32 activity_period = 6;
-    uint32 reputation_expire_alpha_diff = 7;
-    uint32 reputation_issuance = 8;
-    uint32 reputation_issuance_stop = 9;
-    double reputation_penalization_factor = 10;
-    uint32 mining_backup_factor = 11;
-    uint32 mining_replication_factor = 12;
-    uint64 collateral_minimum = 13;
-    uint32 collateral_age = 14;
-    uint32 superblock_period = 15;
-    uint32 extra_rounds = 16;
+    uint32 max_vt_weight = 5;
+    uint32 max_dr_weight = 6;
+    uint32 activity_period = 7;
+    uint32 reputation_expire_alpha_diff = 8;
+    uint32 reputation_issuance = 9;
+    uint32 reputation_issuance_stop = 10;
+    double reputation_penalization_factor = 11;
+    uint32 mining_backup_factor = 12;
+    uint32 mining_replication_factor = 13;
+    uint64 collateral_minimum = 14;
+    uint32 collateral_age = 15;
+    uint32 superblock_period = 16;
+    uint32 extra_rounds = 17;
+    uint32 initial_difficulty = 18;
+    uint32 epochs_with_initial_difficulty = 19;
+    repeated string bootstrapping_committee = 20;
+    uint32 superblock_signing_committee_size = 21;
+    uint32 superblock_committee_decreasing_period = 22;
+    uint32 superblock_committee_decreasing_step = 23;
 }
 
 message VrfProof {
@@ -313,11 +321,9 @@ message DataRequestEligibilityClaim {
     VrfProof proof = 1;
 }
 
-message SuperBlock {
-    Hash ars_root = 1;
-    Hash data_request_root = 2;
-    uint32 index = 3;
-    Hash last_block = 4;
-    Hash last_block_in_previous_superblock = 5;
-    Hash tally_root = 6;
+message SuperBlockVote {
+    Bn256Signature bn256_signature = 1;
+    KeyedSignature secp256k1_signature = 2;
+    Hash superblock_hash = 3;
+    fixed32 superblock_index = 4;
 }
