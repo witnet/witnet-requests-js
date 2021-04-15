@@ -142,7 +142,7 @@ import "witnet-ethereum-bridge/contracts/Request.sol";
 
 // The bytecode of the ${contractName} request that will be sent to Witnet
 contract ${contractName}Request is Request {
-  constructor () Request(hex"${hex}") public { }
+  constructor () public Request(hex"${hex}") { }
 }
 `
 }
@@ -177,7 +177,7 @@ module.exports = function (deployer, network, accounts) {
     deployer.deploy(CBOR)
     deployer.link(CBOR, Witnet)
     deployer.deploy(Witnet)
-    deployer.deploy(WitnetRequestBoard).then(function() {
+    deployer.deploy(WitnetRequestBoard, [accounts[0]]).then(function() {
       return deployer.deploy(WitnetRequestBoardProxy, WitnetRequestBoard.address)
     })
 
