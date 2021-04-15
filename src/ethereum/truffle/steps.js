@@ -142,7 +142,7 @@ import "witnet-ethereum-bridge/contracts/Request.sol";
 
 // The bytecode of the ${contractName} request that will be sent to Witnet
 contract ${contractName}Request is Request {
-  constructor () Request(hex"${hex}") public { }
+  constructor public () Request(hex"${hex}") { }
 }
 `
 }
