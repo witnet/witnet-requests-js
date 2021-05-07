@@ -193,6 +193,7 @@ module.exports = function (deployer, network, accounts) {
 const Witnet = artifacts.require("Witnet")
 const WitnetRequestBoardProxy = artifacts.require("WitnetRequestBoardProxy")
 ${artifacts.map(artifact => `const ${artifact} = artifacts.require("${artifact}")`).join("\n")}
+
 module.exports = async function (deployer) {
   await deployer.link(Witnet, [${artifacts.join(", ")}])
 ${artifacts.map(artifact => {
