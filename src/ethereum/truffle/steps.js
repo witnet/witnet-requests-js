@@ -97,7 +97,7 @@ explained in issue 1.
          const request = new Request()
          
        The Witnet documentation contains a complete tutorial on how to create requests from scratch:
-       https://witnet.github.io/documentation/try/my-first-data-request/#write-your-first-witnet-request
+       https://docs.witnet.io/tutorials/bitcoin-price-feed/introduction/
     
     (Node.js error was: ${e})`
       )
