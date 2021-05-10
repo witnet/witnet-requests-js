@@ -12,7 +12,7 @@ const requestsDir = "./requests/";
 const requestContractsDir = "./contracts/requests/";
 const userContractsDir = "./contracts/";
 const migrationsDir = "./migrations/";
-const schemaDir = `${process.env.PWD}/node_modules/witnet-requests/assets/`;
+const schemaDir = `${process.cwd()}/node_modules/witnet-requests/assets/`;
 
 const schema = loadSchema(schemaDir, "witnet", fs);
 

@@ -25,7 +25,7 @@ var requestsDir = "./requests/";
 var requestContractsDir = "./contracts/requests/";
 var userContractsDir = "./contracts/";
 var migrationsDir = "./migrations/";
-var schemaDir = "".concat(process.env.PWD, "/node_modules/witnet-requests/assets/");
+var schemaDir = "".concat(process.cwd(), "/node_modules/witnet-requests/assets/");
 var schema = loadSchema(schemaDir, "witnet", fs);
 var requestNames = fs.readdirSync(requestsDir).filter(function (fileName) {
   return fileName.match(/.*\.js$/);
