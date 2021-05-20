@@ -136,7 +136,7 @@ export function intoSol (hex, fileName) {
 
   return `// SPDX-License-Identifier: MIT
 
-pragma solidity >=0.6.0 <0.7.0;
+pragma solidity >=0.6.0 <0.9.0;
 
 import "witnet-ethereum-bridge/contracts/Request.sol";
 

@@ -179,7 +179,7 @@ function intoProtoBuf(request, schema) {
 
 function intoSol(hex, fileName) {
   var contractName = fileName.replace(/\.js/, "");
-  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.6.0 <0.7.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () public Request(hex\"").concat(hex, "\") { }\n}\n");
+  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.6.0 <0.9.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () public Request(hex\"").concat(hex, "\") { }\n}\n");
 }
 
 function writeSol(sol, fileName, requestContractsDir, fs) {
