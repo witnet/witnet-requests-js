@@ -51,7 +51,7 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
@@ -142,7 +142,7 @@ function execute(code, requestName, dirName, vm) {
     var error = e;
 
     if (e.message.includes("is not a export function")) {
-      error = Error("\x1B[1m".concat(requestName, " has one of these issues:\x1B[0m\n    1: \x1B[1mIt is missing the `export` statement\x1B[0m\n       Adding this line at the end of ").concat(requestName, " may help (please replace `request` by the name of your request object):\n      \n         export {request as default}\n\n    2: \x1B[1mThe exported object is not an instance of the `Request` class\x1B[0m\n       Please double-check that ").concat(requestName, " contains an instance of the `Request` class and it is exported as explained in issue 1.\n       New instances of the `Request` class are created like this:\n\n         const request = new Request()\n         \n       The Witnet documentation contains a complete tutorial on how to create requests from scratch:\n       https://witnet.github.io/documentation/try/my-first-data-request/#write-your-first-witnet-request\n    \n    (Node.js error was: ").concat(e, ")"));
+      error = Error("\x1B[1m".concat(requestName, " has one of these issues:\x1B[0m\n    1: \x1B[1mIt is missing the `export` statement\x1B[0m\n       Adding this line at the end of ").concat(requestName, " may help (please replace `request` by the name of your request object):\n      \n         export {request as default}\n\n    2: \x1B[1mThe exported object is not an instance of the `Request` class\x1B[0m\n       Please double-check that ").concat(requestName, " contains an instance of the `Request` class and it is exported as explained in issue 1.\n       New instances of the `Request` class are created like this:\n\n         const request = new Request()\n         \n       The Witnet documentation contains a complete tutorial on how to create requests from scratch:\n       https://docs.witnet.io/tutorials/bitcoin-price-feed/introduction/\n    \n    (Node.js error was: ").concat(e, ")"));
     } else if (e.message.includes("is not defined")) {
       var missing = e.message.match(/(.*) is not defined/)[1];
 
@@ -158,14 +158,14 @@ function execute(code, requestName, dirName, vm) {
 function pack(dro) {
   var request = dro.data.data_request;
   var retrieve = request.retrieve.map(function (branch) {
-    return _objectSpread({}, branch, {
+    return _objectSpread(_objectSpread({}, branch), {}, {
       script: branch.encode()
     });
   });
   var aggregate = request.aggregate.pack();
   var tally = request.tally.pack();
-  return _objectSpread({}, dro.data, {
-    data_request: _objectSpread({}, request, {
+  return _objectSpread(_objectSpread({}, dro.data), {}, {
+    data_request: _objectSpread(_objectSpread({}, request), {}, {
       retrieve: retrieve,
       aggregate: aggregate,
       tally: tally
@@ -179,7 +179,7 @@ function intoProtoBuf(request, schema) {
 
 function intoSol(hex, fileName) {
   var contractName = fileName.replace(/\.js/, "");
-  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.6.0 <0.9.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () public Request(hex\"").concat(hex, "\") { }\n}\n");
+  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.6.0 <0.9.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () Request(hex\"").concat(hex, "\") { }\n}\n");
 }
 
 function writeSol(sol, fileName, requestContractsDir, fs) {
@@ -229,7 +229,7 @@ function readMigrationArgs(migrationsDir, fs) {
   var content = readFile("".concat(migrationsDir, "3_user_contracts.js"), fs);
   var regex = /^\s*(await)?\s*deployer\.deploy\([\s\n]*(\w+)[^)]*\)/mg;
   return matchAll(regex, content).reduce(function (acc, match) {
-    return _objectSpread({}, acc, _defineProperty({}, match[2], match[0]));
+    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, match[2], match[0]));
   }, {});
 }
 
@@ -256,7 +256,7 @@ function mockSolidityArgs(args, artifacts) {
   };
   var simpleArtifactNames = artifacts.reduce(function (acc, artifact) {
     var simpleName = simplifyName(artifact);
-    return _objectSpread({}, acc, _defineProperty({}, simpleName, artifact));
+    return _objectSpread(_objectSpread({}, acc), {}, _defineProperty({}, simpleName, artifact));
   }, {});
   return args.split(",").map(function (arg) {
     var _arg$trim$split = arg.trim().split(" "),
