@@ -1,3 +1,6 @@
+const mainnet = {
+};
+
 const goerli = {
   "CBOR": "0x9905821089928e5A26841225510cea8B2984F6D8",
   "Witnet": "0x9b42b0D80C428B17A5828dF5C2c96454ca54bD04",
@@ -23,6 +26,7 @@ const kovan = {
 };
 
 export {
+  mainnet,
   goerli,
   kovan,
   mainnet,
