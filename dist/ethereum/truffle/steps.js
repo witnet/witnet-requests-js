@@ -35,15 +35,15 @@ var _protocolBuffers = _interopRequireDefault(require("protocol-buffers"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -53,13 +53,13 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -179,7 +179,7 @@ function intoProtoBuf(request, schema) {
 
 function intoSol(hex, fileName) {
   var contractName = fileName.replace(/\.js/, "");
-  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.7.0 <0.9.0;\n\nimport \"witnet-ethereum-bridge/contracts/Request.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is Request {\n  constructor () Request(hex\"").concat(hex, "\") { }\n}\n");
+  return "// SPDX-License-Identifier: MIT\n\npragma solidity >=0.7.0 <0.9.0;\n\nimport \"witnet-ethereum-bridge/contracts/exports/WitnetRequest.sol\";\n\n// The bytecode of the ".concat(contractName, " request that will be sent to Witnet\ncontract ").concat(contractName, "Request is WitnetRequest {\n  constructor ()\n    WitnetRequest(\n      hex\"").concat(hex, "\"\n    )\n  {}\n}\n");
 }
 
 function writeSol(sol, fileName, requestContractsDir, fs) {
@@ -194,12 +194,12 @@ function writeMigrations(contractNames, userContractsDir, migrationsDir, fs) {
   }).map(function (fileName) {
     return "".concat(fileName[0].toUpperCase()).concat(fileName.slice(1).replace(".sol", ""));
   });
-  var stage2 = "// WARNING: DO NOT DELETE THIS FILE\n// This file was auto-generated by the Witnet compiler, any manual changes will be overwritten.\nconst WitnetRequestBoardProxy = artifacts.require(\"WitnetRequestBoardProxy\")\nconst WitnetRequestBoard = artifacts.require(\"WitnetRequestBoard\")\nconst CBOR = artifacts.require(\"CBOR\")\nconst Witnet = artifacts.require(\"Witnet\")\n\nconst addresses = ".concat(JSON.stringify(Addresses, null, 2).replace(/(["}])$\n/gm, function (m, p1) {
+  var stage2 = "// WARNING: DO NOT DELETE THIS FILE\n// This file was auto-generated by the Witnet compiler, any manual changes will be overwritten.\nconst WitnetRequestBoard = artifacts.require(\"WitnetRequestBoardInterface\")\nconst Witnet = artifacts.require(\"Witnet\")\n\nconst addresses = ".concat(JSON.stringify(Addresses, null, 2).replace(/(["}])$\n/gm, function (m, p1) {
     return "".concat(p1, ",\n");
-  }), "\n\nmodule.exports = function (deployer, network, accounts) {\n  network = network.split(\"-\")[0]\n  if (network in addresses) {\n    Witnet.address = addresses[network][\"Witnet\"]\n    WitnetRequestBoardProxy.address = addresses[network][\"WitnetRequestBoardProxy\"]\n  } else {\n    deployer.deploy(CBOR)\n    deployer.link(CBOR, Witnet)\n    deployer.deploy(Witnet)\n    deployer.deploy(WitnetRequestBoard, [accounts[0]]).then(function() {\n      return deployer.deploy(WitnetRequestBoardProxy, WitnetRequestBoard.address)\n    })\n\n  }\n}\n");
+  }), "\n\nmodule.exports = function (deployer, network, accounts) {\n  network = network.split(\"-\")[0]\n  if (network in addresses) {\n    Witnet.address = addresses[network][\"Witnet\"]\n    WitnetRequestBoard.address = addresses[network][\"WitnetProxy\"]\n  } else {\n    console.log(\"Fatal: cannot deploy price feeds if no Witnet addresses are provided.\")\n    exit(-1)\n  }\n}\n");
   fs.writeFileSync("".concat(migrationsDir, "2_witnet_core.js"), stage2);
   var userContractsArgs = readMigrationArgs(migrationsDir, fs);
-  var stage3 = "// This file was auto-generated by the Witnet compiler, any manual changes will be overwritten except\n// each contracts' constructor arguments (you can freely edit those and the compiler will respect them).\nconst Witnet = artifacts.require(\"Witnet\")\nconst WitnetRequestBoardProxy = artifacts.require(\"WitnetRequestBoardProxy\")\n".concat(artifacts.map(function (artifact) {
+  var stage3 = "// This file was auto-generated by the Witnet compiler, any manual changes will be overwritten except\n// each contracts' constructor arguments (you can freely edit those and the compiler will respect them).\nconst Witnet = artifacts.require(\"Witnet\")\nconst WitnetRequestBoard = artifacts.require(\"WitnetRequestBoardInterface\")\n".concat(artifacts.map(function (artifact) {
     return "const ".concat(artifact, " = artifacts.require(\"").concat(artifact, "\")");
   }).join("\n"), "\n\nmodule.exports = async function (deployer) {\n  await deployer.link(Witnet, [").concat(artifacts.join(", "), "])\n").concat(artifacts.map(function (artifact) {
     if (artifact in userContractsArgs) {

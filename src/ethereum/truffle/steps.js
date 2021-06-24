@@ -138,11 +138,15 @@ export function intoSol (hex, fileName) {
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "witnet-ethereum-bridge/contracts/Request.sol";
+import "witnet-ethereum-bridge/contracts/exports/WitnetRequest.sol";
 
 // The bytecode of the ${contractName} request that will be sent to Witnet
-contract ${contractName}Request is Request {
-  constructor () Request(hex"${hex}") { }
+contract ${contractName}Request is WitnetRequest {
+  constructor ()
+    WitnetRequest(
+      hex"${hex}"
+    )
+  {}
 }
 `
 }
