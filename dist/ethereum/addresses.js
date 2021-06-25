@@ -3,12 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.rinkeby = exports.mainnet = exports.kovan = exports.goerli = void 0;
-var goerli = {
-  "CBOR": "0x9905821089928e5A26841225510cea8B2984F6D8",
-  "Witnet": "0x9b42b0D80C428B17A5828dF5C2c96454ca54bD04",
-  "WitnetRequestBoardProxy": "0x0C4be6AA667df48de54BA174bE7948875fdf152B"
-};
+exports.conflux_mainnet = exports.conflux_testnet = exports.rinkeby = exports.kovan = exports.goerli = exports.mainnet = void 0;
+var mainnet = {};
+exports.mainnet = mainnet;
+var goerli = {};
 exports.goerli = goerli;
 var mainnet = {
   "CBOR": "0x1D9c4a8f8B7b5F9B8e2641D81927f8F8Cc7fF079",
@@ -22,9 +20,10 @@ var rinkeby = {
   "WitnetRequestBoardProxy": "0x9b42b0D80C428B17A5828dF5C2c96454ca54bD04"
 };
 exports.rinkeby = rinkeby;
-var kovan = {
-  "CBOR": "0xB4B2E2e00e9d6E5490d55623E4F403EC84c6D33f",
-  "Witnet": "0xD9465D38f50f364b3263Cb219e58d4dB2D584530",
-  "WitnetRequestBoardProxy": "0xD9a6d1Ea0d0f4795985725C7Bd40C31a667c033d"
+var conflux_testnet = {
+  "Witnet": "0x8239dbA17E9E922c62128d4083B8627b3b63f69a",
+  "WitnetProxy": "0x851733Ec551720fF2F6e249114435CD00C5585Da"
 };
-exports.kovan = kovan;
+exports.conflux_testnet = conflux_testnet;
+var conflux_mainnet = {};
+exports.conflux_mainnet = conflux_mainnet;

@@ -19,9 +19,12 @@ const rinkeby = {
   "WitnetRequestBoardProxy": "0x9b42b0D80C428B17A5828dF5C2c96454ca54bD04"
 };
 
-const conflux = {
+const conflux_testnet = {
   "Witnet": "0x8239dbA17E9E922c62128d4083B8627b3b63f69a",
-  "WitnetProxy": "0x851733Ec551720fF2F6e249114435CD00C5585Da"
+  "WitnetProxy": "0x80786fD4878c98EC22559942e533223CaA8B003F"
+};
+
+const conflux_mainnet = {
 };
 
 export {
