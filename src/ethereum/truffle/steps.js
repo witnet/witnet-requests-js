@@ -168,7 +168,7 @@ export function writeMigrations (contractNames, userContractsDir, migrationsDir,
 const WitnetRequestBoard = artifacts.require("WitnetRequestBoardInterface")
 const Witnet = artifacts.require("Witnet")
 
-const addresses = ${JSON.stringify(Addresses, null, 2).replace(/(["}])$\n/gm, (m, p1) => `${p1},\n`)}
+const addresses = ${JSON.stringify(Addresses, null, 2).replace(/(["}])$\n/gm, (m, p1) => `${p1},\n`).replace(/_/g,".")}
 
 module.exports = function (deployer, network, accounts) {
   network = network.split("-")[0]
