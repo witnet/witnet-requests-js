@@ -180,7 +180,6 @@ module.exports = function (deployer, network, accounts) {
     deployer.deploy(WitnetRequestBoard, [accounts[0]]).then(function() {
       return deployer.deploy(WitnetRequestBoardProxy, WitnetRequestBoard.address)
     })
-
   }
 }
 `;
