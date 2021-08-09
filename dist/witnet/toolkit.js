@@ -392,21 +392,14 @@ function _tryDataRequestCommand() {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            if (!args.includes('--from-solidity')) {
-              _context7.next = 7;
-              break;
-            }
-
-            _context7.next = 3;
+            _context7.next = 2;
             return toolkitRun(settings, ['decode-data-request'].concat(_toConsumableArray(args.slice(1))));
 
-          case 3:
+          case 2:
             request_json = _context7.sent;
             mir = JSON.parse(request_json);
             request = decodeScriptsAndArguments(mir);
             radon = new Radon(request);
-
-          case 7:
             return _context7.abrupt("return", fallbackCommand(settings, args).then(function (output) {
               var report;
 
@@ -427,7 +420,7 @@ function _tryDataRequestCommand() {
                   return " \u2502   ".concat(sideChar, "    [").concat(callIndex, "] ").concat(operator, " ").concat(yellow(formattedRadonValue[0]), ": ").concat(formattedRadonValue[1]);
                 }).join('\n');
                 var urlInterpolation = request ? "\n |   ".concat(sideChar, "  Method: ").concat(radon.retrieve[sourceIndex].kind, "\n |   ").concat(sideChar, "  Complete URL: ").concat(radon.retrieve[sourceIndex].url) : '';
-                return " \u2502   ".concat(cornerChar, "\u2500").concat(green('['), " Source #").concat(sourceIndex, " ").concat(request ? "(".concat(new URL(request.retrieve[sourceIndex].url).hostname, ")") : '').concat(green(']'), " ").concat(urlInterpolation, "\n |   ").concat(sideChar, "  Number of executed operators: ").concat(source.context.call_index, "\n |   ").concat(sideChar, "  Execution time: ").concat(executionTime, " ms\n |   ").concat(sideChar, "  Execution trace:\n").concat(traceInterpolation);
+                return " \u2502   ".concat(cornerChar, "\u2500").concat(green('['), " Source #").concat(sourceIndex, " ").concat(request ? "(".concat(new URL(request.retrieve[sourceIndex].url).hostname, ")") : '', " ").concat(green(']')).concat(urlInterpolation, "\n |   ").concat(sideChar, "  Number of executed operators: ").concat(source.context.call_index, "\n |   ").concat(sideChar, "  Execution time: ").concat(executionTime, " ms\n |   ").concat(sideChar, "  Execution trace:\n").concat(traceInterpolation);
               }).join('\n |   │\n');
               var aggregationExecuted = report.aggregate.context.completion_time !== null;
               var tallyExecuted = report.tally.context.completion_time !== null;
@@ -443,7 +436,7 @@ function _tryDataRequestCommand() {
               return "\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551 Witnet data request local execution report \u2551\n\u255A\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D\n".concat(retrievalInterpolation, "\n").concat(aggregationInterpolation, "\n").concat(tallyInterpolation);
             }));
 
-          case 8:
+          case 7:
           case "end":
             return _context7.stop();
         }

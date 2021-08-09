@@ -226,12 +226,10 @@ async function decodeDataRequestCommand (settings, args) {
 async function tryDataRequestCommand (settings, args) {
   let request, radon
 
-  if (args.includes('--from-solidity')) {
-    const request_json = await toolkitRun(settings, ['decode-data-request', ...args.slice(1)])
-    const mir = JSON.parse(request_json)
-    request = decodeScriptsAndArguments(mir)
-    radon = new Radon(request)
-  }
+  const request_json = await toolkitRun(settings, ['decode-data-request', ...args.slice(1)])
+  const mir = JSON.parse(request_json)
+  request = decodeScriptsAndArguments(mir)
+  radon = new Radon(request)
 
   return fallbackCommand(settings, args)
     .then((output) => {
