@@ -281,6 +281,12 @@ async function tryDataRequestCommand (settings, args) {
       const aggregationResult = formatRadonValue(report.aggregate.result);
       const tallyResult = formatRadonValue(report.tally.result);
 
+      let filenameInterpolation = ''
+      if (args.includes('--from-solidity')) {
+        const filename = args[2].split('/').pop()
+        filenameInterpolation = `\n║ ${filename}${' '.repeat(42 - filename.length)} ║`
+      }
+
       const retrievalInterpolation = ` │
  │  ┌────────────────────────────────────────────────┐
  ├──┤ Retrieval stage                                │
@@ -309,7 +315,7 @@ ${dataSourcesInterpolation}`
     └────────────────────────────────────────────────┘`
 
       return `╔════════════════════════════════════════════╗
-║ Witnet data request local execution report ║
+║ Witnet data request local execution report ║${filenameInterpolation}
 ╚╤═══════════════════════════════════════════╝
 ${retrievalInterpolation}
 ${aggregationInterpolation}
