@@ -226,68 +226,84 @@ async function decodeDataRequestCommand (settings, args) {
 async function tryDataRequestCommand (settings, args) {
   let request, radon
 
-  const request_json = await toolkitRun(settings, ['decode-data-request', ...args.slice(1)])
-  const mir = JSON.parse(request_json)
-  request = decodeScriptsAndArguments(mir)
-  radon = new Radon(request)
+  let tasks = [args]
+  if (args[1] === '--from-solidity') {
+    // If no path is provided, fallback to default data request path
+    if (args[2] === undefined) {
+      args[2] = './contracts/requests/'
+    }
+    // If the path is a directory, find `.sol` files within, and use those as tasks
+    if (fs.lstatSync(args[2]).isDirectory()) {
+      tasks = fs.readdirSync(args[2])
+        .filter((filename) => filename.match(/.+.sol$/g))
+        .map((filename) => [args[0], args[1], path.join(args[2], filename)])
+    }
+  }
 
-  return fallbackCommand(settings, args)
-    .then((output) => {
-      let report;
-      try {
-        report = JSON.parse(output)
-      } catch {
-        return
-      }
-      const dataSourcesCount = report.retrieve.length
+  return Promise.all(tasks.map(async (task) => {
+    const request_json = await toolkitRun(settings, ['decode-data-request', ...task.slice(1)])
+    const mir = JSON.parse(request_json)
+    request = decodeScriptsAndArguments(mir)
 
-      const dataSourcesInterpolation = report.retrieve.map((source, sourceIndex, sources) => {
-        const executionTime =
-          (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000
+    radon = new Radon(request)
 
-        const cornerChar = sourceIndex < sources.length - 1 ? '├' : '└'
-        const sideChar = sourceIndex < sources.length - 1 ? '│' : ' '
+    const output = await fallbackCommand(settings, task)
 
-        const traceInterpolation = source.partial_results.map((radonValue, callIndex) => {
-          const formattedRadonValue = formatRadonValue(radonValue)
+    let report;
+    try {
+      report = JSON.parse(output)
+    } catch {
+      return
+    }
+    const dataSourcesCount = report.retrieve.length
 
-          const operator = radon
-            ? (callIndex === 0
-              ? blue(radon.retrieve[sourceIndex].kind)
-              : `.${blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')}${radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')')}`) + ' ->'
-            : ''
+    const dataSourcesInterpolation = report.retrieve.map((source, sourceIndex, sources) => {
+      const executionTime =
+        (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000
 
-          return ` │   ${sideChar}    [${callIndex}] ${operator} ${yellow(formattedRadonValue[0])}: ${formattedRadonValue[1]}`
-        }).join('\n')
+      const cornerChar = sourceIndex < sources.length - 1 ? '├' : '└'
+      const sideChar = sourceIndex < sources.length - 1 ? '│' : ' '
 
-        const urlInterpolation = request ? `
+      const traceInterpolation = source.partial_results.map((radonValue, callIndex) => {
+        const formattedRadonValue = formatRadonValue(radonValue)
+
+        const operator = radon
+          ? (callIndex === 0
+          ? blue(radon.retrieve[sourceIndex].kind)
+          : `.${blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')}${radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')')}`) + ' ->'
+          : ''
+
+        return ` │   ${sideChar}    [${callIndex}] ${operator} ${yellow(formattedRadonValue[0])}: ${formattedRadonValue[1]}`
+      }).join('\n')
+
+      const urlInterpolation = request ? `
  |   ${sideChar}  Method: ${radon.retrieve[sourceIndex].kind}
  |   ${sideChar}  Complete URL: ${radon.retrieve[sourceIndex].url}` : ''
 
-        return ` │   ${cornerChar}─${green('[')} Source #${sourceIndex} ${ request ? `(${new URL(request.retrieve[sourceIndex].url).hostname})` : ''} ${green(']')}${urlInterpolation}
+      return ` │   ${cornerChar}─${green('[')} Source #${sourceIndex} ${ request ? `(${new URL(request.retrieve[sourceIndex].url).hostname})` : ''} ${green(']')}${urlInterpolation}
  |   ${sideChar}  Number of executed operators: ${source.context.call_index}
  |   ${sideChar}  Execution time: ${executionTime} ms
  |   ${sideChar}  Execution trace:\n${traceInterpolation}`
-      }).join('\n |   │\n')
+    }).join('\n |   │\n')
 
-      const aggregationExecuted = report.aggregate.context.completion_time !== null
-      const tallyExecuted = report.tally.context.completion_time !== null
+    const aggregationExecuted = report.aggregate.context.completion_time !== null
+    const tallyExecuted = report.tally.context.completion_time !== null
 
-      const aggregationExecutionTime = aggregationExecuted &&
-        (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000
-      const tallyExecutionTime = tallyExecuted &&
-        (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000
+    const aggregationExecutionTime = aggregationExecuted &&
+      (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000
+    const tallyExecutionTime = tallyExecuted &&
+      (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000
 
-      const aggregationResult = formatRadonValue(report.aggregate.result);
-      const tallyResult = formatRadonValue(report.tally.result);
+    const aggregationResult = formatRadonValue(report.aggregate.result);
+    const tallyResult = formatRadonValue(report.tally.result);
 
-      let filenameInterpolation = ''
-      if (args.includes('--from-solidity')) {
-        const filename = args[2].split('/').pop()
-        filenameInterpolation = `\n║ ${filename}${' '.repeat(42 - filename.length)} ║`
-      }
+    let filenameInterpolation = ''
+    if (args.includes('--from-solidity')) {
+      const filename = task[2].split('/').pop()
+      filenameInterpolation = `\n║ ${green(filename)}${' '.repeat(42 - filename.length)} ║`
+    }
 
-      const retrievalInterpolation = ` │
+    const retrievalInterpolation = ` │
  │  ┌────────────────────────────────────────────────┐
  ├──┤ Retrieval stage                                │
  │  ├────────────────────────────────────────────────┤
@@ -296,31 +312,31 @@ async function tryDataRequestCommand (settings, args) {
  │   │
 ${dataSourcesInterpolation}`
 
-      const aggregationExecutionTimeInterpolation = aggregationExecuted ? `
+    const aggregationExecutionTimeInterpolation = aggregationExecuted ? `
  │  │ Execution time: ${aggregationExecutionTime} ms${` `.repeat(28 - aggregationExecutionTime.toString().length)}│` : ''
-      const aggregationInterpolation = ` │
+    const aggregationInterpolation = ` │
  │  ┌────────────────────────────────────────────────┐
  ├──┤ Aggregation stage                              │
  │  ├────────────────────────────────────────────────┤${aggregationExecutionTimeInterpolation}
  │  │ Result is ${yellow(aggregationResult[0])}: ${aggregationResult[1]}${` `.repeat(Math.max(0, (aggregationResult[0] === 'Error' ? 44 : 35) - aggregationResult[0].toString().length - aggregationResult[1].toString().length))}│
  │  └────────────────────────────────────────────────┘`
 
-      const tallyExecutionTimeInterpolation = tallyExecuted ? `
+    const tallyExecutionTimeInterpolation = tallyExecuted ? `
     │ Execution time: ${tallyExecutionTime} ms${` `.repeat(28 - tallyExecutionTime.toString().length)}│` : ''
-      const tallyInterpolation = ` │  
+    const tallyInterpolation = ` │  
  │  ┌────────────────────────────────────────────────┐
  └──┤ Tally stage                                    │
     ├────────────────────────────────────────────────┤${tallyExecutionTimeInterpolation}
     │ Result is ${yellow(tallyResult[0])}: ${tallyResult[1]}${` `.repeat(Math.max(0, (tallyResult[0] === 'Error' ? 44 : 35) - tallyResult[0].toString().length - tallyResult[1].toString().length))}│
     └────────────────────────────────────────────────┘`
 
-      return `╔════════════════════════════════════════════╗
+    return `╔════════════════════════════════════════════╗
 ║ Witnet data request local execution report ║${filenameInterpolation}
 ╚╤═══════════════════════════════════════════╝
 ${retrievalInterpolation}
 ${aggregationInterpolation}
 ${tallyInterpolation}`
-    })
+  })).then((outputs) => outputs.join('\n'))
 }
 
 async function fallbackCommand (settings, args) {
