@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "rad2sol": "dist/ethereum/truffle/rad2sol.js"
+    "rad2sol": "dist/ethereum/truffle/rad2sol.js",
+    "witnet-toolkit": "dist/witnet/toolkit.js"
   },
   "scripts": {
     "build": "babel src -d dist",
@@ -17,10 +18,14 @@
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5"
+    "@babel/preset-env": "^7.15.0",
+    "core-js": "^3.16.0",
+    "regenerator-runtime": "^0.13.9"
   },
   "dependencies": {
-    "cbor": "^5.0.1",
-    "protocol-buffers": "^4.1.0"
+    "cbor": "^8.0.0",
+    "protocol-buffers": "^4.1.0",
+    "request": "^2.88.2",
+    "witnet-radon-js": "^0.8.4"
   }
 }
