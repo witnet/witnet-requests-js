@@ -11,7 +11,7 @@ const {
 const requestsDir = "./requests/";
 const requestContractsDir = "./contracts/requests/";
 const userContractsDir = "./contracts/";
-const migrationsDir = "./migrations/";
+const migrationsDir = "./migrations/scripts/";
 const schemaDir = `${process.cwd()}/node_modules/witnet-requests/assets/`;
 
 const schema = loadSchema(schemaDir, "witnet", fs);

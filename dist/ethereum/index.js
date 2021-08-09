@@ -5,11 +5,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Truffle = exports.Addresses = void 0;
-
-var Addresses = _interopRequireWildcard(require("./addresses"));
-
-exports.Addresses = Addresses;
+exports.Truffle = void 0;
 
 var Truffle = _interopRequireWildcard(require("./truffle"));
 
