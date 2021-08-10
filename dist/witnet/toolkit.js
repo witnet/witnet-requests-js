@@ -597,22 +597,28 @@ function _main() {
             return router['install'](settings);
 
           case 4:
+            // Make sure that commands with --help are always passed through
+            if (args.includes("--help")) {
+              command = router['fallback'];
+            } // Run the invoked command, if any
+
+
             if (!command) {
-              _context10.next = 9;
+              _context10.next = 10;
               break;
             }
 
-            _context10.next = 7;
+            _context10.next = 8;
             return command(settings, args.slice(2));
 
-          case 7:
+          case 8:
             output = _context10.sent;
 
             if (output) {
               console.log(output.trim());
             }
 
-          case 9:
+          case 10:
           case "end":
             return _context10.stop();
         }

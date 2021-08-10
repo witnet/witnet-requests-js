@@ -396,11 +396,16 @@ const settings = {
  */
 async function main () {
   const commandName = args[2]
-  const command = router[commandName] || router['fallback']
+  let command = router[commandName] || router['fallback']
 
   // Always run base command before anything else, mainly to ensure that the witnet_toolkit binary
   // has been downloaded
   await router['install'](settings)
+
+  // Make sure that commands with --help are always passed through
+  if (args.includes("--help")) {
+    command = router['fallback']
+  }
 
   // Run the invoked command, if any
   if (command) {
