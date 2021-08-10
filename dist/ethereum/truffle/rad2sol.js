@@ -19,12 +19,13 @@ var _require = require("../../../dist/ethereum/truffle/steps"),
     requestsBanner = _require.requestsBanner,
     requestsSucceed = _require.requestsSucceed,
     writeMigrations = _require.writeMigrations,
+    writeMigrationsRadons = _require.writeMigrationsRadons,
     writeSol = _require.writeSol;
 
 var requestsDir = "./requests/";
 var requestContractsDir = "./contracts/requests/";
 var userContractsDir = "./contracts/";
-var migrationsDir = "./migrations/scripts/";
+var migrationsDir = "./migrations/";
 var schemaDir = "".concat(process.cwd(), "/node_modules/witnet-requests/assets/");
 var schema = loadSchema(schemaDir, "witnet", fs);
 var requestNames = fs.readdirSync(requestsDir).filter(function (fileName) {
@@ -33,6 +34,7 @@ var requestNames = fs.readdirSync(requestsDir).filter(function (fileName) {
 var contractNames = fs.readdirSync(userContractsDir).filter(function (exampleName) {
   return exampleName.match(/.*\.sol$/);
 });
+var migrationsRadons = {};
 var steps = [function (fileName) {
   return "".concat(requestsDir).concat(fileName);
 }, function (path) {
@@ -47,6 +49,15 @@ var steps = [function (fileName) {
 }, function (buff) {
   return buff.toString("hex");
 }, function (hex, i) {
+  var priceName = requestNames[i].replace(/\.js/, "");
+  migrationsRadons["".concat(priceName, "Feed")] = {
+    ERC2362ID: "Price-".concat(priceName.replace("Price", "").split(/(?=[A-Z])/).map(function (s) {
+      return s.toUpperCase();
+    }).join("/"), "-3"),
+    bytecode: "0x" + hex
+  };
+  return hex;
+}, function (hex, i) {
   return intoSol(hex, requestNames[i]);
 }, function (sol, i) {
   return writeSol(sol, requestNames[i], requestContractsDir, fs);
@@ -60,6 +71,7 @@ Promise.all(steps.reduce(function (prev, step) {
   });
 }, requestNames.map(function (fileName) {
   return Promise.resolve(fileName);
-}))).then(requestsSucceed).then(migrationsBanner).then(function () {
-  return writeMigrations(contractNames, userContractsDir, migrationsDir, fs);
+}))).then(requestsSucceed).then(migrationsBanner) // .then(() => writeMigrations(contractNames, userContractsDir, migrationsDir, fs))
+.then(function () {
+  return writeMigrationsRadons(migrationsRadons, migrationsDir, fs);
 }).then(migrationsSucceed)["catch"](fail);
