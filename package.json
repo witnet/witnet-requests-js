@@ -19,11 +19,11 @@
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.15.0",
-    "core-js": "^3.16.0",
     "regenerator-runtime": "^0.13.9"
   },
   "dependencies": {
     "cbor": "^8.0.0",
+    "core-js": "^3.16.2",
     "protocol-buffers": "^4.1.0",
     "request": "^2.88.2",
     "witnet-radon-js": "^0.8.4"
