@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 
+var _steps = require("./steps");
+
 var fs = require("fs");
 
 var vm = require("vm");
@@ -33,6 +35,11 @@ var requestNames = fs.readdirSync(requestsDir).filter(function (fileName) {
 var contractNames = fs.readdirSync(userContractsDir).filter(function (exampleName) {
   return exampleName.match(/.*\.sol$/);
 });
+var requestsList = {};
+var generateRequestsContracts = !process.argv.includes('--disable-requests-contracts') && true;
+var generateRequestsList = !process.argv.includes('--disable-requests-list') && true;
+var generateUserContractsMigrations = !process.argv.includes('--disable-user-contracts-migrations') && true;
+var generateWitnetMigrations = !process.argv.includes('--disable-witnet-migrations') && true;
 var steps = [function (fileName) {
   return "".concat(requestsDir).concat(fileName);
 }, function (path) {
@@ -47,9 +54,16 @@ var steps = [function (fileName) {
 }, function (buff) {
   return buff.toString("hex");
 }, function (hex, i) {
+  requestsList[requestNames[i].replace(/\.js/, "")] = {
+    bytecode: "0x".concat(hex)
+  };
+  return hex;
+}, function (hex, i) {
   return intoSol(hex, requestNames[i]);
 }, function (sol, i) {
-  return writeSol(sol, requestNames[i], requestContractsDir, fs);
+  if (generateRequestsContracts) {
+    writeSol(sol, requestNames[i], requestContractsDir, fs);
+  }
 }];
 requestsBanner();
 Promise.all(steps.reduce(function (prev, step) {
@@ -61,5 +75,16 @@ Promise.all(steps.reduce(function (prev, step) {
 }, requestNames.map(function (fileName) {
   return Promise.resolve(fileName);
 }))).then(requestsSucceed).then(migrationsBanner).then(function () {
-  return writeMigrations(contractNames, userContractsDir, migrationsDir, fs);
-}).then(migrationsSucceed)["catch"](fail);
+  return writeMigrations(contractNames, userContractsDir, migrationsDir, {
+    generateUserContractsMigrations: generateUserContractsMigrations,
+    generateWitnetMigrations: generateWitnetMigrations
+  }, fs);
+}).then(function () {
+  if (generateRequestsList) {
+    (0, _steps.writeRequestsList)(requestsList, migrationsDir, fs);
+  }
+}).then(function () {
+  if (generateUserContractsMigrations || generateWitnetMigrations) {
+    migrationsSucceed();
+  }
+})["catch"](fail);
