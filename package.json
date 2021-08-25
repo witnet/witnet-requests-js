@@ -1,6 +1,6 @@
 {
   "name": "witnet-requests",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Witnet Requests Lib",
   "main": "dist/index.js",
   "repository": "https://github.com/witnet/witnet-requests-js",
@@ -26,6 +26,7 @@
     "core-js": "^3.16.2",
     "protocol-buffers": "^4.1.0",
     "request": "^2.88.2",
+    "witnet-ethereum-bridge": "^0.4.2",
     "witnet-radon-js": "^0.8.4"
   }
 }
