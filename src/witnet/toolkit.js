@@ -21,7 +21,7 @@ const { exec } = require("child_process")
 const toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.3.1/"
 const toolkitFileNames = {
   win32: (arch) => `witnet_toolkit-${arch}-pc-windows-msvc.exe`,
-  linux: (arch) => `witnet_toolkit-${arch}-unknown-linux-gnu`,
+  linux: (arch) => `witnet_toolkit-${arch}-unknown-linux-gnu${arch.includes("arm") ? "eabihf" : ""}`,
   darwin: (arch) => `witnet_toolkit-${arch}-apple-darwin`,
 }
 const archsMap = {

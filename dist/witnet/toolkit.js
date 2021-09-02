@@ -67,7 +67,7 @@ var toolkitFileNames = {
     return "witnet_toolkit-".concat(arch, "-pc-windows-msvc.exe");
   },
   linux: function linux(arch) {
-    return "witnet_toolkit-".concat(arch, "-unknown-linux-gnu");
+    return "witnet_toolkit-".concat(arch, "-unknown-linux-gnu").concat(arch.includes("arm") ? "eabihf" : "");
   },
   darwin: function darwin(arch) {
     return "witnet_toolkit-".concat(arch, "-apple-darwin");
