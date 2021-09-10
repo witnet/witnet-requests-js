@@ -215,6 +215,9 @@ const artifactNames = ${JSON.stringify(witnetSettings.artifacts.default, null, 2
 
 module.exports = async function (deployer, network, accounts) {
   network = network.split("-")[0]
+  if (["mainnet", "ropsten", "kovan", "rinkeby", "gorli", "goerli", "görli"].includes(network)) {
+    network = "ethereum." + network
+  }
   if (network in addresses) {
     WitnetParserLib.address = addresses[network]["WitnetParserLib"]
     WitnetProxy.address = addresses[network]["WitnetRequestBoard"]
