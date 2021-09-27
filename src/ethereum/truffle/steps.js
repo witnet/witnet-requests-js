@@ -140,6 +140,10 @@ export function intoSol (hex, fileName) {
 
 pragma solidity >=0.7.0 <0.9.0;
 
+// For the Witnet Request Board OVM-compatible (Optimism) "trustable" implementation (e.g. BOBA network),
+// replace the next import line with:
+// import "witnet-ethereum-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableBoba.sol";
+import "witnet-ethereum-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableDefault.sol";
 import "witnet-ethereum-bridge/contracts/requests/WitnetRequestInitializableBase.sol";
 
 // The bytecode of the ${contractName} request that will be sent to Witnet
