@@ -2,7 +2,6 @@ class Request {
   constructor () {
     this.data = {
       data_request: {
-        time_lock: Math.floor(Date.now() / 1000),
         retrieve: [],
         aggregate: null,
         tally: null,
@@ -46,7 +45,7 @@ class Request {
       this.data.collateral = collateral;
     } else {
       throw RangeError("`collateral (in nanoWits)` needs to be >= 1 WIT");
-    }  
+    }
     return this
   }
   setFees (reward, commit_and_reveal_fee) {
