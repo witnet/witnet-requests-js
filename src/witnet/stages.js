@@ -1,11 +1,24 @@
 import * as CBOR from "cbor"
-import { Script } from "../radon/script"
-import { TYPES } from "../radon/types"
+import { Script } from ".."
+import { RETRIEVAL_METHODS, TYPES } from "../radon/types"
 
 class Source extends Script {
+  constructor(kind, firstType) {
+    super(firstType);
+    this.kind = kind
+  }
+}
+
+class HttpGetSource extends Source {
   constructor (url) {
-    super([TYPES.STRING]);
+    super(RETRIEVAL_METHODS.HttpGet, [TYPES.STRING]);
     this.url = url
+  }
+}
+
+class RandomSource extends Source {
+  constructor () {
+    super(RETRIEVAL_METHODS.Rng, [TYPES.BYTES]);
   }
 }
 
@@ -41,6 +54,7 @@ class Tally extends Joiner {
 
 export {
   Aggregator,
-  Source,
+  HttpGetSource,
+  RandomSource,
   Tally,
 }

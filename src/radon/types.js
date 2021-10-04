@@ -31,6 +31,7 @@ const REDUCERS = {
   //deviationAverage: 0x08,
   //deviationMedian: 0x09,
   //deviationMaximum: 0x0A,
+  concatenateAndHash: 0x0B,
 };
 
 const FILTERS = {
@@ -148,6 +149,10 @@ const typeSystem = {
   }
 };
 
+const RETRIEVAL_METHODS = {
+  HttpGet: 0x01,
+  Rng: 0x02,
+}
 
 // Helper function that helps pretty-printing RADON types
 function typeFormat (type) {
@@ -162,6 +167,7 @@ export {
   FILTERS,
   PSEUDOTYPES,
   REDUCERS,
+  RETRIEVAL_METHODS,
   TYPES,
   typeFormat,
   typeSystem,
