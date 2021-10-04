@@ -5,17 +5,17 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Tally = exports.Source = exports.Aggregator = void 0;
+exports.Tally = exports.RandomSource = exports.HttpGetSource = exports.Aggregator = void 0;
 
 var CBOR = _interopRequireWildcard(require("cbor"));
 
-var _script = require("../radon/script");
+var _ = require("..");
 
 var _types = require("../radon/types");
 
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function _getRequireWildcardCache() { return cache; }; return cache; }
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 function _toArray(arr) { return _arrayWithHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableRest(); }
 
@@ -25,7 +25,7 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -41,7 +41,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -54,20 +54,54 @@ var Source = /*#__PURE__*/function (_Script) {
 
   var _super = _createSuper(Source);
 
-  function Source(url) {
+  function Source(kind, firstType) {
     var _this;
 
     _classCallCheck(this, Source);
 
-    _this = _super.call(this, [_types.TYPES.STRING]);
-    _this.url = url;
+    _this = _super.call(this, firstType);
+    _this.kind = kind;
     return _this;
   }
 
   return Source;
-}(_script.Script);
+}(_.Script);
 
-exports.Source = Source;
+var HttpGetSource = /*#__PURE__*/function (_Source) {
+  _inherits(HttpGetSource, _Source);
+
+  var _super2 = _createSuper(HttpGetSource);
+
+  function HttpGetSource(url) {
+    var _this2;
+
+    _classCallCheck(this, HttpGetSource);
+
+    _this2 = _super2.call(this, _types.RETRIEVAL_METHODS.HttpGet, [_types.TYPES.STRING]);
+    _this2.url = url;
+    return _this2;
+  }
+
+  return HttpGetSource;
+}(Source);
+
+exports.HttpGetSource = HttpGetSource;
+
+var RandomSource = /*#__PURE__*/function (_Source2) {
+  _inherits(RandomSource, _Source2);
+
+  var _super3 = _createSuper(RandomSource);
+
+  function RandomSource() {
+    _classCallCheck(this, RandomSource);
+
+    return _super3.call(this, _types.RETRIEVAL_METHODS.Rng, [_types.TYPES.BYTES]);
+  }
+
+  return RandomSource;
+}(Source);
+
+exports.RandomSource = RandomSource;
 
 var Joiner = /*#__PURE__*/function () {
   function Joiner(filters, reducer) {
@@ -104,7 +138,7 @@ var Joiner = /*#__PURE__*/function () {
 var Aggregator = /*#__PURE__*/function (_Joiner) {
   _inherits(Aggregator, _Joiner);
 
-  var _super2 = _createSuper(Aggregator);
+  var _super4 = _createSuper(Aggregator);
 
   function Aggregator(_ref3) {
     var _ref3$filters = _ref3.filters,
@@ -113,7 +147,7 @@ var Aggregator = /*#__PURE__*/function (_Joiner) {
 
     _classCallCheck(this, Aggregator);
 
-    return _super2.call(this, filters, reducer);
+    return _super4.call(this, filters, reducer);
   }
 
   return Aggregator;
@@ -124,7 +158,7 @@ exports.Aggregator = Aggregator;
 var Tally = /*#__PURE__*/function (_Joiner2) {
   _inherits(Tally, _Joiner2);
 
-  var _super3 = _createSuper(Tally);
+  var _super5 = _createSuper(Tally);
 
   function Tally(_ref4) {
     var _ref4$filters = _ref4.filters,
@@ -133,7 +167,7 @@ var Tally = /*#__PURE__*/function (_Joiner2) {
 
     _classCallCheck(this, Tally);
 
-    return _super3.call(this, filters, reducer);
+    return _super5.call(this, filters, reducer);
   }
 
   return Tally;

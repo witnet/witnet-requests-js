@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.typeFormat = typeFormat;
-exports.typeSystem = exports.TYPES = exports.REDUCERS = exports.PSEUDOTYPES = exports.FILTERS = void 0;
+exports.typeSystem = exports.TYPES = exports.RETRIEVAL_METHODS = exports.REDUCERS = exports.PSEUDOTYPES = exports.FILTERS = void 0;
 
 var _typeSystem;
 
@@ -39,10 +39,11 @@ var REDUCERS = {
   //averageMeanWeighted: 0x04,
   averageMedian: 0x05,
   //averageMedianWeighted: 0x06,
-  deviationStandard: 0x07 //deviationAverage: 0x08,
+  deviationStandard: 0x07,
+  //deviationAverage: 0x08,
   //deviationMedian: 0x09,
   //deviationMaximum: 0x0A,
-
+  concatenateAndHash: 0x0B
 };
 exports.REDUCERS = REDUCERS;
 var FILTERS = {
@@ -149,9 +150,14 @@ var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.ANY, {
   //parseXML: [0x78, [TYPES.MAP]],
   toLowerCase: [0x79, [TYPES.STRING]],
   toUpperCase: [0x7A, [TYPES.STRING]]
-}), _typeSystem); // Helper function that helps pretty-printing RADON types
-
+}), _typeSystem);
 exports.typeSystem = typeSystem;
+var RETRIEVAL_METHODS = {
+  HttpGet: 0x01,
+  Rng: 0x02
+}; // Helper function that helps pretty-printing RADON types
+
+exports.RETRIEVAL_METHODS = RETRIEVAL_METHODS;
 
 function typeFormat(type) {
   if (type.length > 1) {

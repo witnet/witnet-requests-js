@@ -17,7 +17,6 @@ var Request = /*#__PURE__*/function () {
 
     this.data = {
       data_request: {
-        time_lock: Math.floor(Date.now() / 1000),
         retrieve: [],
         aggregate: null,
         tally: null
