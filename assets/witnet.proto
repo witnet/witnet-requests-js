@@ -15,6 +15,7 @@ message Message {
             LastBeacon LastBeacon = 8;
             Transaction Transaction = 9;
             SuperBlockVote SuperBlockVote = 10;
+            SuperBlock SuperBlock = 11;
         }
     }
 
@@ -59,7 +60,7 @@ message Block {
             Hash reveal_hash_merkle_root = 5;
             Hash tally_hash_merkle_root = 6;
         }
-        uint32 version = 1;
+        uint32 signals = 1;
         CheckpointBeacon beacon = 2;
         BlockMerkleRoots merkle_roots = 3;
         BlockEligibilityClaim proof = 4;
@@ -77,6 +78,16 @@ message Block {
     BlockHeader block_header = 1;
     KeyedSignature block_sig = 2;
     BlockTransactions txns = 3;
+}
+
+message SuperBlock {
+    uint32 signing_committee_length = 1;
+    Hash ars_root = 2;
+    Hash data_request_root = 3;
+    uint32 index = 4;
+    Hash last_block = 5;
+    Hash last_block_in_previous_superblock = 6;
+    Hash tally_root = 7;
 }
 
 message InventoryAnnouncement {
@@ -106,7 +117,9 @@ message ValueTransferOutput {
 message DataRequestOutput {
     message RADRequest {
         enum RADType {
-            HttpGet = 0;
+            Unknown = 0;
+            HttpGet = 1;
+            Rng = 2;
         }
         message RADFilter {
             uint32 op = 1;
@@ -278,6 +291,7 @@ message InventoryEntry {
     oneof kind {
         Hash Block = 1;
         Hash Tx = 2;
+        uint32 SuperBlock = 3;
     }
 }
 
@@ -299,12 +313,14 @@ message ConsensusConstants {
     uint32 collateral_age = 15;
     uint32 superblock_period = 16;
     uint32 extra_rounds = 17;
-    uint32 initial_difficulty = 18;
-    uint32 epochs_with_initial_difficulty = 19;
+    uint32 minimum_difficulty = 18;
+    uint32 epochs_with_minimum_difficulty = 19;
     repeated string bootstrapping_committee = 20;
     uint32 superblock_signing_committee_size = 21;
     uint32 superblock_committee_decreasing_period = 22;
     uint32 superblock_committee_decreasing_step = 23;
+    uint64 initial_block_reward = 24;
+    uint32 halving_period = 25;
 }
 
 message VrfProof {
