@@ -5,7 +5,8 @@ import { TYPES } from "../radon/types"
 class Source extends Script {
   constructor (url) {
     super([TYPES.STRING]);
-    this.url = url
+    this.kind = 1;
+    this.url = url;
   }
 }
 
