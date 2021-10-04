@@ -37,7 +37,7 @@ var REDUCERS = {
   mode: 0x02,
   averageMean: 0x03,
   //averageMeanWeighted: 0x04,
-  //averageMedian: 0x05,
+  averageMedian: 0x05,
   //averageMedianWeighted: 0x06,
   deviationStandard: 0x07 //deviationAverage: 0x08,
   //deviationMedian: 0x09,
