@@ -412,7 +412,7 @@ function _tryDataRequestCommand() {
 
             return _context8.abrupt("return", Promise.all(tasks.map( /*#__PURE__*/function () {
               var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(task) {
-                var request_json, mir, output, report, dataSourcesCount, dataSourcesInterpolation, aggregationExecuted, tallyExecuted, aggregationExecutionTime, tallyExecutionTime, aggregationResult, tallyResult, filenameInterpolation, filename, retrievalInterpolation, aggregationExecutionTimeInterpolation, aggregationInterpolation, tallyExecutionTimeInterpolation, tallyInterpolation;
+                var request_json, mir, output, report, dataSourcesCount, dataSourcesInterpolation, aggregationExecuted, aggregationExecutionTime, aggregationResult, tallyExecuted, tallyExecutionTime, tallyResult, filenameInterpolation, filename, retrievalInterpolation, aggregationExecutionTimeInterpolation, aggregationInterpolation, tallyExecutionTimeInterpolation, tallyInterpolation;
                 return regeneratorRuntime.wrap(function _callee7$(_context7) {
                   while (1) {
                     switch (_context7.prev = _context7.next) {
@@ -443,23 +443,54 @@ function _tryDataRequestCommand() {
                       case 16:
                         dataSourcesCount = report.retrieve.length;
                         dataSourcesInterpolation = report.retrieve.map(function (source, sourceIndex, sources) {
-                          var executionTime = (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000;
+                          var executionTime;
+
+                          try {
+                            executionTime = (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000;
+                          } catch (_) {
+                            executionTime = 0;
+                          }
+
                           var cornerChar = sourceIndex < sources.length - 1 ? '├' : '└';
                           var sideChar = sourceIndex < sources.length - 1 ? '│' : ' ';
-                          var traceInterpolation = source.partial_results.map(function (radonValue, callIndex) {
-                            var formattedRadonValue = formatRadonValue(radonValue);
-                            var operator = radon ? (callIndex === 0 ? blue(radon.retrieve[sourceIndex].kind) : ".".concat(blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')).concat(radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')'))) + ' ->' : '';
-                            return " \u2502   ".concat(sideChar, "    [").concat(callIndex, "] ").concat(operator, " ").concat(yellow(formattedRadonValue[0]), ": ").concat(formattedRadonValue[1]);
-                          }).join('\n');
+                          var traceInterpolation;
+
+                          try {
+                            if ((source.partial_results || []).length === 0) {
+                              source.partial_results = [source.result];
+                            }
+
+                            traceInterpolation = source.partial_results.map(function (radonValue, callIndex) {
+                              var formattedRadonValue = formatRadonValue(radonValue);
+                              var operator = radon ? (callIndex === 0 ? blue(radon.retrieve[sourceIndex].kind) : ".".concat(blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')).concat(radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')'))) + ' ->' : '';
+                              return " \u2502   ".concat(sideChar, "    [").concat(callIndex, "] ").concat(operator, " ").concat(yellow(formattedRadonValue[0]), ": ").concat(formattedRadonValue[1]);
+                            }).join('\n');
+                          } catch (e) {
+                            traceInterpolation = " |   ".concat(sideChar, "  ").concat(red('[ERROR] Cannot decode execution trace information'));
+                          }
+
                           var urlInterpolation = request ? "\n |   ".concat(sideChar, "  Method: ").concat(radon.retrieve[sourceIndex].kind, "\n |   ").concat(sideChar, "  Complete URL: ").concat(radon.retrieve[sourceIndex].url) : '';
-                          return " \u2502   ".concat(cornerChar, "\u2500").concat(green('['), " Source #").concat(sourceIndex, " ").concat(request ? "(".concat(new URL(request.retrieve[sourceIndex].url).hostname, ")") : '', " ").concat(green(']')).concat(urlInterpolation, "\n |   ").concat(sideChar, "  Number of executed operators: ").concat(source.context.call_index, "\n |   ").concat(sideChar, "  Execution time: ").concat(executionTime, " ms\n |   ").concat(sideChar, "  Execution trace:\n").concat(traceInterpolation);
+                          var formattedRadonResult = formatRadonValue(source.result);
+                          var resultInterpolation = "".concat(yellow(formattedRadonResult[0]), ": ").concat(formattedRadonResult[1]);
+                          return " \u2502   ".concat(cornerChar, "\u2500").concat(green('['), " Source #").concat(sourceIndex, " ").concat(request ? "(".concat(new URL(request.retrieve[sourceIndex].url).hostname, ")") : '', " ").concat(green(']')).concat(urlInterpolation, "\n |   ").concat(sideChar, "  Number of executed operators: ").concat(source.context.call_index + 1 || 0, "\n |   ").concat(sideChar, "  Execution time: ").concat(executionTime > 0 ? executionTime + ' ms' : 'unknown', "\n |   ").concat(sideChar, "  Execution trace:\n").concat(traceInterpolation, "\n |   ").concat(sideChar, "  Result: ").concat(resultInterpolation);
                         }).join('\n |   │\n');
-                        aggregationExecuted = report.aggregate.context.completion_time !== null;
-                        tallyExecuted = report.tally.context.completion_time !== null;
-                        aggregationExecutionTime = aggregationExecuted && (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000;
-                        tallyExecutionTime = tallyExecuted && (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000;
-                        aggregationResult = formatRadonValue(report.aggregate.result);
-                        tallyResult = formatRadonValue(report.tally.result);
+
+                        try {
+                          aggregationExecuted = report.aggregate.context.completion_time !== null;
+                          aggregationExecutionTime = aggregationExecuted && (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000;
+                          aggregationResult = formatRadonValue(report.aggregate.result);
+                        } catch (error) {
+                          aggregationExecuted = false;
+                        }
+
+                        try {
+                          tallyExecuted = report.tally.context.completion_time !== null;
+                          tallyExecutionTime = tallyExecuted && (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000;
+                          tallyResult = formatRadonValue(report.tally.result);
+                        } catch (error) {
+                          tallyExecuted = false;
+                        }
+
                         filenameInterpolation = '';
 
                         if (args.includes('--from-solidity')) {
@@ -474,7 +505,7 @@ function _tryDataRequestCommand() {
                         tallyInterpolation = " \u2502  \n \u2502  \u250C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n \u2514\u2500\u2500\u2524 Tally stage                                    \u2502\n    \u251C\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524".concat(tallyExecutionTimeInterpolation, "\n    \u2502 Result is ").concat(yellow(tallyResult[0]), ": ").concat(tallyResult[1]).concat(" ".repeat(Math.max(0, (tallyResult[0] === 'Error' ? 44 : 35) - tallyResult[0].toString().length - tallyResult[1].toString().length)), "\u2502\n    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518");
                         return _context7.abrupt("return", "\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557\n\u2551 Witnet data request local execution report \u2551".concat(filenameInterpolation, "\n\u255A\u2564\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255D\n").concat(retrievalInterpolation, "\n").concat(aggregationInterpolation, "\n").concat(tallyInterpolation));
 
-                      case 32:
+                      case 28:
                       case "end":
                         return _context7.stop();
                     }

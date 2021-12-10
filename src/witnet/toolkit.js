@@ -258,44 +258,70 @@ async function tryDataRequestCommand (settings, args) {
     const dataSourcesCount = report.retrieve.length
 
     const dataSourcesInterpolation = report.retrieve.map((source, sourceIndex, sources) => {
-      const executionTime =
-        (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000
+      let executionTime
+      try {
+        executionTime =
+          (source.context.completion_time.nanos_since_epoch - source.context.start_time.nanos_since_epoch) / 1000000
+      } catch (_) {
+        executionTime = 0
+      }
 
       const cornerChar = sourceIndex < sources.length - 1 ? '├' : '└'
       const sideChar = sourceIndex < sources.length - 1 ? '│' : ' '
 
-      const traceInterpolation = source.partial_results.map((radonValue, callIndex) => {
-        const formattedRadonValue = formatRadonValue(radonValue)
+      let traceInterpolation
+      try {
+        if ((source.partial_results || []).length === 0) {
+          source.partial_results = [source.result]
+        }
+        traceInterpolation = source.partial_results.map((radonValue, callIndex) => {
+          const formattedRadonValue = formatRadonValue(radonValue)
 
-        const operator = radon
-          ? (callIndex === 0
-          ? blue(radon.retrieve[sourceIndex].kind)
-          : `.${blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')}${radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')')}`) + ' ->'
-          : ''
+          const operator = radon
+            ? (callIndex === 0
+            ? blue(radon.retrieve[sourceIndex].kind)
+            : `.${blue(radon.retrieve[sourceIndex].script.operators[callIndex - 1].operatorInfo.name + '(')}${radon.retrieve[sourceIndex].script.operators[callIndex - 1].mirArguments.join(', ') + blue(')')}`) + ' ->'
+            : ''
 
-        return ` │   ${sideChar}    [${callIndex}] ${operator} ${yellow(formattedRadonValue[0])}: ${formattedRadonValue[1]}`
-      }).join('\n')
+          return ` │   ${sideChar}    [${callIndex}] ${operator} ${yellow(formattedRadonValue[0])}: ${formattedRadonValue[1]}`
+        }).join('\n')
+      } catch (e) {
+        traceInterpolation = ` |   ${sideChar}  ${red('[ERROR] Cannot decode execution trace information')}`
+      }
 
       const urlInterpolation = request ? `
  |   ${sideChar}  Method: ${radon.retrieve[sourceIndex].kind}
  |   ${sideChar}  Complete URL: ${radon.retrieve[sourceIndex].url}` : ''
 
+      const formattedRadonResult = formatRadonValue(source.result)
+      const resultInterpolation = `${yellow(formattedRadonResult[0])}: ${formattedRadonResult[1]}`
+
       return ` │   ${cornerChar}─${green('[')} Source #${sourceIndex} ${ request ? `(${new URL(request.retrieve[sourceIndex].url).hostname})` : ''} ${green(']')}${urlInterpolation}
- |   ${sideChar}  Number of executed operators: ${source.context.call_index}
- |   ${sideChar}  Execution time: ${executionTime} ms
- |   ${sideChar}  Execution trace:\n${traceInterpolation}`
+ |   ${sideChar}  Number of executed operators: ${source.context.call_index + 1 || 0}
+ |   ${sideChar}  Execution time: ${executionTime > 0 ? executionTime + ' ms' : 'unknown'}
+ |   ${sideChar}  Execution trace:\n${traceInterpolation}
+ |   ${sideChar}  Result: ${resultInterpolation}`
     }).join('\n |   │\n')
 
-    const aggregationExecuted = report.aggregate.context.completion_time !== null
-    const tallyExecuted = report.tally.context.completion_time !== null
+    let aggregationExecuted, aggregationExecutionTime, aggregationResult, tallyExecuted, tallyExecutionTime, tallyResult
 
-    const aggregationExecutionTime = aggregationExecuted &&
-      (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000
-    const tallyExecutionTime = tallyExecuted &&
-      (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000
+    try {
+      aggregationExecuted = report.aggregate.context.completion_time !== null
+      aggregationExecutionTime = aggregationExecuted &&
+        (report.aggregate.context.completion_time.nanos_since_epoch - report.aggregate.context.start_time.nanos_since_epoch) / 1000000
+      aggregationResult = formatRadonValue(report.aggregate.result);
+    } catch (error) {
+      aggregationExecuted = false
+    }
 
-    const aggregationResult = formatRadonValue(report.aggregate.result);
-    const tallyResult = formatRadonValue(report.tally.result);
+    try {
+      tallyExecuted = report.tally.context.completion_time !== null
+      tallyExecutionTime = tallyExecuted &&
+        (report.tally.context.completion_time.nanos_since_epoch - report.tally.context.start_time.nanos_since_epoch) / 1000000
+      tallyResult = formatRadonValue(report.tally.result);
+    } catch (error) {
+      tallyExecuted = false
+    }
 
     let filenameInterpolation = ''
     if (args.includes('--from-solidity')) {
