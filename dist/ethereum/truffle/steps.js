@@ -64,9 +64,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var witnetAddresses = require("".concat(process.cwd(), "/node_modules/witnet-ethereum-bridge/migrations/witnet.addresses.json"));
+var witnetAddresses = require("".concat(process.cwd(), "/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json"));
 
-var witnetSettings = require("".concat(process.cwd(), "/node_modules/witnet-ethereum-bridge/migrations/witnet.settings"));
+var witnetSettings = require("".concat(process.cwd(), "/node_modules/witnet-solidity-bridge/migrations/witnet.settings"));
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
  */

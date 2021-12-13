@@ -2,8 +2,8 @@ import * as Witnet from "../../..";
 import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
 
-const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-ethereum-bridge/migrations/witnet.addresses.json`)
-const witnetSettings = require(`${process.cwd()}/node_modules/witnet-ethereum-bridge/migrations/witnet.settings`)
+const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json`)
+const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
 
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
