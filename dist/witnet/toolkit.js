@@ -343,16 +343,24 @@ function decodeScriptsAndArguments(mir) {
     });
   });
   decoded.aggregate.filters = decoded.aggregate.filters.map(function (filter) {
-    var decodedArgs = cbor.decode(Buffer.from(filter.args));
-    return _objectSpread(_objectSpread({}, filter), {}, {
-      args: decodedArgs
-    });
+    if (filter.args.length > 0) {
+      var decodedArgs = cbor.decode(Buffer.from(filter.args));
+      return _objectSpread(_objectSpread({}, filter), {}, {
+        args: decodedArgs
+      });
+    } else {
+      return filter;
+    }
   });
   decoded.tally.filters = decoded.tally.filters.map(function (filter) {
-    var decodedArgs = cbor.decode(Buffer.from(filter.args));
-    return _objectSpread(_objectSpread({}, filter), {}, {
-      args: decodedArgs
-    });
+    if (filter.args.length > 0) {
+      var decodedArgs = cbor.decode(Buffer.from(filter.args));
+      return _objectSpread(_objectSpread({}, filter), {}, {
+        args: decodedArgs
+      });
+    } else {
+      return filter;
+    }
   });
   return decoded;
 }

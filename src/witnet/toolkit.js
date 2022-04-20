@@ -205,12 +205,20 @@ function decodeScriptsAndArguments (mir) {
     return {...source, script: decodedScript}
   })
   decoded.aggregate.filters = decoded.aggregate.filters.map((filter) => {
-    const decodedArgs = cbor.decode(Buffer.from(filter.args))
-    return {...filter, args: decodedArgs}
+    if (filter.args.length > 0) {
+      const decodedArgs = cbor.decode(Buffer.from(filter.args))
+      return {...filter, args: decodedArgs}
+    } else {
+      return filter
+    }
   })
   decoded.tally.filters = decoded.tally.filters.map((filter) => {
-    const decodedArgs = cbor.decode(Buffer.from(filter.args))
-    return {...filter, args: decodedArgs}
+    if (filter.args.length > 0) {
+      const decodedArgs = cbor.decode(Buffer.from(filter.args))
+      return {...filter, args: decodedArgs}
+    } else {
+      return filter
+    }
   })
 
   return decoded
