@@ -154,7 +154,8 @@ var typeSystem = (_typeSystem = {}, _defineProperty(_typeSystem, TYPES.ANY, {
 exports.typeSystem = typeSystem;
 var RETRIEVAL_METHODS = {
   HttpGet: 0x01,
-  Rng: 0x02
+  Rng: 0x02,
+  HttpPost: 0x02
 }; // Helper function that helps pretty-printing RADON types
 
 exports.RETRIEVAL_METHODS = RETRIEVAL_METHODS;

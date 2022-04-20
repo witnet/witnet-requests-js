@@ -16,6 +16,13 @@ class HttpGetSource extends Source {
   }
 }
 
+class HttpPostSource extends Source {
+  constructor (url) {
+    super(RETRIEVAL_METHODS.HttpPost, [TYPES.STRING]);
+    this.url = url
+  }
+}
+
 class RandomSource extends Source {
   constructor () {
     super(RETRIEVAL_METHODS.Rng, [TYPES.BYTES]);
@@ -55,6 +62,7 @@ class Tally extends Joiner {
 export {
   Aggregator,
   HttpGetSource,
+  HttpPostSource,
   RandomSource,
   Tally,
 }

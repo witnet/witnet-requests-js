@@ -29,6 +29,12 @@ Object.defineProperty(exports, "Source", {
     return _stages.HttpGetSource;
   }
 });
+Object.defineProperty(exports, "HttpPostSource", {
+  enumerable: true,
+  get: function get() {
+    return _stages.HttpPostSource;
+  }
+});
 Object.defineProperty(exports, "RandomSource", {
   enumerable: true,
   get: function get() {

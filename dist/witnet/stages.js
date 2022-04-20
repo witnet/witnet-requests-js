@@ -5,7 +5,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Tally = exports.RandomSource = exports.HttpGetSource = exports.Aggregator = void 0;
+exports.Tally = exports.RandomSource = exports.HttpPostSource = exports.HttpGetSource = exports.Aggregator = void 0;
 
 var CBOR = _interopRequireWildcard(require("cbor"));
 
@@ -87,15 +87,35 @@ var HttpGetSource = /*#__PURE__*/function (_Source) {
 
 exports.HttpGetSource = HttpGetSource;
 
-var RandomSource = /*#__PURE__*/function (_Source2) {
-  _inherits(RandomSource, _Source2);
+var HttpPostSource = /*#__PURE__*/function (_Source2) {
+  _inherits(HttpPostSource, _Source2);
 
-  var _super3 = _createSuper(RandomSource);
+  var _super3 = _createSuper(HttpPostSource);
+
+  function HttpPostSource(url) {
+    var _this3;
+
+    _classCallCheck(this, HttpPostSource);
+
+    _this3 = _super3.call(this, _types.RETRIEVAL_METHODS.HttpPost, [_types.TYPES.STRING]);
+    _this3.url = url;
+    return _this3;
+  }
+
+  return HttpPostSource;
+}(Source);
+
+exports.HttpPostSource = HttpPostSource;
+
+var RandomSource = /*#__PURE__*/function (_Source3) {
+  _inherits(RandomSource, _Source3);
+
+  var _super4 = _createSuper(RandomSource);
 
   function RandomSource() {
     _classCallCheck(this, RandomSource);
 
-    return _super3.call(this, _types.RETRIEVAL_METHODS.Rng, [_types.TYPES.BYTES]);
+    return _super4.call(this, _types.RETRIEVAL_METHODS.Rng, [_types.TYPES.BYTES]);
   }
 
   return RandomSource;
@@ -138,7 +158,7 @@ var Joiner = /*#__PURE__*/function () {
 var Aggregator = /*#__PURE__*/function (_Joiner) {
   _inherits(Aggregator, _Joiner);
 
-  var _super4 = _createSuper(Aggregator);
+  var _super5 = _createSuper(Aggregator);
 
   function Aggregator(_ref3) {
     var _ref3$filters = _ref3.filters,
@@ -147,7 +167,7 @@ var Aggregator = /*#__PURE__*/function (_Joiner) {
 
     _classCallCheck(this, Aggregator);
 
-    return _super4.call(this, filters, reducer);
+    return _super5.call(this, filters, reducer);
   }
 
   return Aggregator;
@@ -158,7 +178,7 @@ exports.Aggregator = Aggregator;
 var Tally = /*#__PURE__*/function (_Joiner2) {
   _inherits(Tally, _Joiner2);
 
-  var _super5 = _createSuper(Tally);
+  var _super6 = _createSuper(Tally);
 
   function Tally(_ref4) {
     var _ref4$filters = _ref4.filters,
@@ -167,7 +187,7 @@ var Tally = /*#__PURE__*/function (_Joiner2) {
 
     _classCallCheck(this, Tally);
 
-    return _super5.call(this, filters, reducer);
+    return _super6.call(this, filters, reducer);
   }
 
   return Tally;
