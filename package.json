@@ -17,12 +17,12 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.15.0",
     "jest": "^28.1.0"
   },
   "dependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.15.0",
     "cbor": "^8.0.0",
     "core-js": "^3.16.2",
     "protocol-buffers": "^4.1.0",
