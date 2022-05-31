@@ -2,8 +2,8 @@ import * as Witnet from "../../..";
 import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
 
-const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-ethereum-bridge/migrations/witnet.addresses.json`)
-const witnetSettings = require(`${process.cwd()}/node_modules/witnet-ethereum-bridge/migrations/witnet.settings`)
+const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json`)
+const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
 
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
@@ -142,9 +142,9 @@ pragma solidity >=0.7.0 <0.9.0;
 
 // For the Witnet Request Board OVM-compatible (Optimism) "trustable" implementation (e.g. BOBA network),
 // replace the next import line with:
-// import "witnet-ethereum-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableBoba.sol";
-import "witnet-ethereum-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableDefault.sol";
-import "witnet-ethereum-bridge/contracts/requests/WitnetRequestInitializableBase.sol";
+// import "witnet-solidity-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableBoba.sol";
+import "witnet-solidity-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableDefault.sol";
+import "witnet-solidity-bridge/contracts/requests/WitnetRequestInitializableBase.sol";
 
 // The bytecode of the ${contractName} request that will be sent to Witnet
 contract ${contractName}Request is WitnetRequestInitializableBase {
