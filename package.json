@@ -13,12 +13,14 @@
   },
   "scripts": {
     "build": "babel src -d dist",
-    "compile": "npm run build"
+    "compile": "npm run build",
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.15.0"
+    "@babel/preset-env": "^7.15.0",
+    "jest": "^28.1.0"
   },
   "dependencies": {
     "cbor": "^8.0.0",
