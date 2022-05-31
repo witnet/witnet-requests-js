@@ -1,15 +1,9 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
-Object.defineProperty(exports, "Script", {
-  enumerable: true,
-  get: function get() {
-    return _script.Script;
-  }
 });
 Object.defineProperty(exports, "Aggregator", {
   enumerable: true,
@@ -17,13 +11,8 @@ Object.defineProperty(exports, "Aggregator", {
     return _stages.Aggregator;
   }
 });
+exports.Ethereum = void 0;
 Object.defineProperty(exports, "HttpGetSource", {
-  enumerable: true,
-  get: function get() {
-    return _stages.HttpGetSource;
-  }
-});
-Object.defineProperty(exports, "Source", {
   enumerable: true,
   get: function get() {
     return _stages.HttpGetSource;
@@ -35,19 +24,32 @@ Object.defineProperty(exports, "RandomSource", {
     return _stages.RandomSource;
   }
 });
-Object.defineProperty(exports, "Tally", {
-  enumerable: true,
-  get: function get() {
-    return _stages.Tally;
-  }
-});
 Object.defineProperty(exports, "Request", {
   enumerable: true,
   get: function get() {
     return _request.Request;
   }
 });
-exports.Ethereum = exports.Types = exports.TYPES = void 0;
+Object.defineProperty(exports, "Script", {
+  enumerable: true,
+  get: function get() {
+    return _script.Script;
+  }
+});
+Object.defineProperty(exports, "Source", {
+  enumerable: true,
+  get: function get() {
+    return _stages.HttpGetSource;
+  }
+});
+exports.TYPES = void 0;
+Object.defineProperty(exports, "Tally", {
+  enumerable: true,
+  get: function get() {
+    return _stages.Tally;
+  }
+});
+exports.Types = void 0;
 
 var _script = require("./radon/script");
 

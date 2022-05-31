@@ -5,6 +5,10 @@ import ProtoBuf from "protocol-buffers"
 const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json`)
 const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
 
+function isRoutedRequest (request) {
+  return request.hasOwnProperty('bytecode')
+}
+
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
  */
@@ -155,7 +159,7 @@ contract ${contractName}Request is WitnetRequestInitializableBase {
 `
 }
 
-export function writeRequestsList(newRequests, migrationsDir, fs) {
+export function writeRequestsList(newRequests, migrationsDir, fs) { 
   let existingRequests = {}
   const listFilePath = `${migrationsDir}witnet.requests.json`
   if (fs.existsSync(listFilePath)) {
@@ -164,7 +168,13 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
   if (existingRequests) {
     Object.entries(newRequests).forEach(([key, value]) => {
       if (existingRequests[key]) {
-        newRequests[key] = { ...existingRequests[key], ...newRequests[key] }
+        if (isRoutedRequest(existingRequests[key]) && !isRoutedRequest(newRequests[key])) {
+          // Don't keep the bytecode field if the old request is not a routed request and the new request is
+          const { bytecode , ...validExistingRequestsFields } = existingRequests[key]
+          newRequests[key] = { ...validExistingRequestsFields, ...newRequests[key] }
+        } else {
+          newRequests[key] = { ...existingRequests[key], ...newRequests[key] }
+        } 
       }
     })
   }

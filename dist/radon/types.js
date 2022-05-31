@@ -3,8 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.TYPES = exports.RETRIEVAL_METHODS = exports.REDUCERS = exports.PSEUDOTYPES = exports.FILTERS = void 0;
 exports.typeFormat = typeFormat;
-exports.typeSystem = exports.TYPES = exports.RETRIEVAL_METHODS = exports.REDUCERS = exports.PSEUDOTYPES = exports.FILTERS = void 0;
+exports.typeSystem = void 0;
 
 var _typeSystem;
 

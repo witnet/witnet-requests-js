@@ -1,36 +1,38 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tap = tap;
-exports.requestsBanner = requestsBanner;
-exports.requestsSucceed = requestsSucceed;
-exports.migrationsBanner = migrationsBanner;
-exports.migrationsSucceed = migrationsSucceed;
-exports.fail = fail;
-exports.readFile = readFile;
-exports.loadSchema = loadSchema;
 exports.compile = compile;
 exports.execute = execute;
-exports.pack = pack;
+exports.fail = fail;
 exports.intoProtoBuf = intoProtoBuf;
 exports.intoSol = intoSol;
+exports.loadSchema = loadSchema;
+exports.matchAll = matchAll;
+exports.migrationsBanner = migrationsBanner;
+exports.migrationsSucceed = migrationsSucceed;
+exports.mockSolidityArgs = mockSolidityArgs;
+exports.pack = pack;
+exports.readFile = readFile;
+exports.readMigrationArgs = readMigrationArgs;
+exports.readSolidityArgs = readSolidityArgs;
+exports.requestsBanner = requestsBanner;
+exports.requestsSucceed = requestsSucceed;
+exports.tap = tap;
+exports.writeMigrations = writeMigrations;
 exports.writeRequestsList = writeRequestsList;
 exports.writeSol = writeSol;
-exports.writeMigrations = writeMigrations;
-exports.readSolidityArgs = readSolidityArgs;
-exports.readMigrationArgs = readMigrationArgs;
-exports.mockSolidityArgs = mockSolidityArgs;
-exports.matchAll = matchAll;
 
 var Witnet = _interopRequireWildcard(require("../../.."));
 
 var Babel = _interopRequireWildcard(require("@babel/core/lib/transform"));
 
 var _protocolBuffers = _interopRequireDefault(require("protocol-buffers"));
+
+var _excluded = ["bytecode"];
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -46,6 +48,10 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -58,15 +64,19 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var witnetAddresses = require("".concat(process.cwd(), "/node_modules/witnet-ethereum-bridge/migrations/witnet.addresses.json"));
+var witnetAddresses = require("".concat(process.cwd(), "/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json"));
 
-var witnetSettings = require("".concat(process.cwd(), "/node_modules/witnet-ethereum-bridge/migrations/witnet.settings"));
+var witnetSettings = require("".concat(process.cwd(), "/node_modules/witnet-solidity-bridge/migrations/witnet.settings"));
+
+function isRoutedRequest(request) {
+  return request.hasOwnProperty('bytecode');
+}
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
  */
@@ -201,7 +211,16 @@ function writeRequestsList(newRequests, migrationsDir, fs) {
           value = _ref2[1];
 
       if (existingRequests[key]) {
-        newRequests[key] = _objectSpread(_objectSpread({}, existingRequests[key]), newRequests[key]);
+        if (isRoutedRequest(existingRequests[key]) && !isRoutedRequest(newRequests[key])) {
+          // Don't keep the bytecode field if the old request is not a routed request and the new request is
+          var _existingRequests$key = existingRequests[key],
+              bytecode = _existingRequests$key.bytecode,
+              validExistingRequestsFields = _objectWithoutProperties(_existingRequests$key, _excluded);
+
+          newRequests[key] = _objectSpread(_objectSpread({}, validExistingRequestsFields), newRequests[key]);
+        } else {
+          newRequests[key] = _objectSpread(_objectSpread({}, existingRequests[key]), newRequests[key]);
+        }
       }
     });
   }
