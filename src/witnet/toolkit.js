@@ -18,7 +18,7 @@ const { exec } = require("child_process")
 /*
  Constants
  */
-const toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.4.3/"
+const toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.5.2/"
 const toolkitFileNames = {
   win32: (arch) => `witnet_toolkit-${arch}-pc-windows-msvc.exe`,
   linux: (arch) => `witnet_toolkit-${arch}-unknown-linux-gnu${arch.includes("arm") ? "eabihf" : ""}`,

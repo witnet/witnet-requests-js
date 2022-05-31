@@ -61,7 +61,7 @@ var _require2 = require("child_process"),
  */
 
 
-var toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.4.3/";
+var toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.5.2/";
 var toolkitFileNames = {
   win32: function win32(arch) {
     return "witnet_toolkit-".concat(arch, "-pc-windows-msvc.exe");
