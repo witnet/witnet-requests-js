@@ -374,7 +374,7 @@ async function fallbackCommand (settings, args) {
       if (matched) {
         errorMessage = matched.groups.message
       }
-      console.error(errorMessage)
+      console.error(errorMessage || err)
     })
 }
 
