@@ -117,7 +117,7 @@ https://discord.gg/2rTFYXHmPm `)
 
 async function toolkitRun(settings, args) {
   return new Promise((resolve, reject) => {
-    exec(`${settings.paths.toolkitBinPath} ${args.join(' ')}`, (error, stdout, stderr) => {
+    exec(`${settings.paths.toolkitBinPath} ${args.join(' ')}`, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
         reject(error)
       }
