@@ -1,6 +1,7 @@
 import * as Witnet from "../../..";
 import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
+import { sortObjectKeys } from "../../utils";
 
 const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json`)
 const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
@@ -177,10 +178,15 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
         } 
       }
     })
+    Object.entries(existingRequests).forEach(([key, request]) => {
+      if (!newRequests[key] && !request.bytecode) {
+        newRequests[key] = existingRequests[key]
+      }
+    })
   }
   fs.writeFileSync(
     listFilePath,
-    JSON.stringify(newRequests, null, 4)
+    JSON.stringify(sortObjectKeys(newRequests), null, 4)
   );
 }
 
