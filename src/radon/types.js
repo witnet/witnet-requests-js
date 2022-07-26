@@ -152,7 +152,7 @@ const typeSystem = {
 const RETRIEVAL_METHODS = {
   HttpGet: 0x01,
   Rng: 0x02,
-  HttpPost: 0x02,
+  HttpPost: 0x03,
 }
 
 // Helper function that helps pretty-printing RADON types

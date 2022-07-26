@@ -5,21 +5,30 @@ import { RETRIEVAL_METHODS, TYPES } from "../radon/types"
 class Source extends Script {
   constructor(kind, firstType) {
     super(firstType);
-    this.kind = kind
+    this.kind = kind;
   }
 }
 
 class HttpGetSource extends Source {
-  constructor (url) {
+  constructor (url, headers) {
     super(RETRIEVAL_METHODS.HttpGet, [TYPES.STRING]);
-    this.url = url
+    this.url = url;
+    this.headers = headers && Object.entries(headers).map(([key, value]) => ({ left: key, right: value }));
   }
 }
 
 class HttpPostSource extends Source {
-  constructor (url) {
+  constructor (url, body, headers) {
     super(RETRIEVAL_METHODS.HttpPost, [TYPES.STRING]);
-    this.url = url
+    this.url = url;
+    this.body = body;
+    this.headers = headers && Object.entries(headers).map(([key, value]) => ({ left: key, right: value }));
+  }
+}
+
+class GraphQLSource extends HttpPostSource {
+  constructor (url, query, headers) {
+    super(url, JSON.stringify({ query }), headers);
   }
 }
 
@@ -61,8 +70,9 @@ class Tally extends Joiner {
 
 export {
   Aggregator,
+  GraphQLSource,
   HttpGetSource,
   HttpPostSource,
   RandomSource,
   Tally,
-}
+};

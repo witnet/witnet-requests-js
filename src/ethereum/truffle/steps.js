@@ -2,7 +2,7 @@ import * as Witnet from "../../..";
 import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
 
-const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses.json`)
+const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses`)
 const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
 
 function isRoutedRequest (request) {
@@ -159,7 +159,7 @@ contract ${contractName}Request is WitnetRequestInitializableBase {
 `
 }
 
-export function writeRequestsList(newRequests, migrationsDir, fs) { 
+export function writeRequestsList(newRequests, migrationsDir, fs) {
   let existingRequests = {}
   const listFilePath = `${migrationsDir}witnet.requests.json`
   if (fs.existsSync(listFilePath)) {
@@ -174,7 +174,7 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
           newRequests[key] = { ...validExistingRequestsFields, ...newRequests[key] }
         } else {
           newRequests[key] = { ...existingRequests[key], ...newRequests[key] }
-        } 
+        }
       }
     })
   }
