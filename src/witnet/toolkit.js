@@ -297,9 +297,25 @@ async function tryDataRequestCommand (settings, args) {
         traceInterpolation = ` |   ${sideChar}  ${red('[ERROR] Cannot decode execution trace information')}`
       }
 
-      const urlInterpolation = request ? `
+      let urlInterpolation = request ? `
  |   ${sideChar}  Method: ${radon.retrieve[sourceIndex].kind}
  |   ${sideChar}  Complete URL: ${radon.retrieve[sourceIndex].url}` : ''
+
+      // TODO: take headers info from `radon` instead of `request` once POST is supported in `witnet-radon-js`
+      const headers = request.retrieve[sourceIndex].headers
+      if (headers) {
+        const headersInterpolation = headers.map(([key, value]) => `
+ |   ${sideChar}    "${key}": "${value}"`).join()
+        urlInterpolation += `
+ |   ${sideChar}  Headers: ${headersInterpolation}`
+      }
+
+      // TODO: take body info from `radon` instead of `request` once POST is supported in `witnet-radon-js`
+      const body = request.retrieve[sourceIndex].body
+      if (body) {
+        urlInterpolation += `
+ |   ${sideChar}  Body: ${Buffer.from(body)}`
+      }
 
       const formattedRadonResult = formatRadonValue(source.result)
       const resultInterpolation = `${yellow(formattedRadonResult[0])}: ${formattedRadonResult[1]}`
