@@ -198,28 +198,25 @@ async function updateCommand (settings) {
     })
 }
 
+function decodeFilters (mir) {
+  return mir.map((filter) => {
+    if (filter.args.length > 0) {
+      const decodedArgs = cbor.decode(Buffer.from(filter.args))
+      return {...filter, args: decodedArgs}
+    } else {
+      return filter
+    }
+  })
+}
+
 function decodeScriptsAndArguments (mir) {
   let decoded = mir.data_request
   decoded.retrieve = decoded.retrieve.map((source) => {
     const decodedScript = cbor.decode(Buffer.from(source.script))
     return {...source, script: decodedScript}
   })
-  decoded.aggregate.filters = decoded.aggregate.filters.map((filter) => {
-    if (filter.args.length > 0) {
-      const decodedArgs = cbor.decode(Buffer.from(filter.args))
-      return {...filter, args: decodedArgs}
-    } else {
-      return filter
-    }
-  })
-  decoded.tally.filters = decoded.tally.filters.map((filter) => {
-    if (filter.args.length > 0) {
-      const decodedArgs = cbor.decode(Buffer.from(filter.args))
-      return {...filter, args: decodedArgs}
-    } else {
-      return filter
-    }
-  })
+  decoded.aggregate.filters = decodeFilters(decoded.aggregate.filters)
+  decoded.tally.filters = decodeFilters(decoded.tally.filters)
 
   return decoded
 }
