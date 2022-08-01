@@ -167,7 +167,7 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
     existingRequests = JSON.parse(readFile(listFilePath, fs))
   }
   if (existingRequests) {
-    Object.entries(newRequests).forEach(([key, value]) => {
+    Object.keys(newRequests).forEach((key) => {
       if (existingRequests[key]) {
         if (isRoutedRequest(existingRequests[key]) && !isRoutedRequest(newRequests[key])) {
           // Don't keep the bytecode field if the old request is not a routed request and the new request is
@@ -178,9 +178,10 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
         }
       }
     })
+    // Make sure we don't delete any routed price feeds that have been generated manually (not present in newRequests)
     Object.entries(existingRequests).forEach(([key, request]) => {
       if (!newRequests[key] && !request.bytecode) {
-        newRequests[key] = existingRequests[key]
+        newRequests[key] = request
       }
     })
   }
