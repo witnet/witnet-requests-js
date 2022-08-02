@@ -1,6 +1,6 @@
 import * as CBOR from "cbor"
 import { Script } from ".."
-import { RETRIEVAL_METHODS, TYPES } from "../radon/types"
+import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "../radon/types"
 
 class Source extends Script {
   constructor(kind, firstType) {
@@ -54,17 +54,61 @@ class Joiner {
       reducer: this.reducer,
     }
   }
+
+  static deviationAndAverage (deviation) {
+    return new Joiner([[FILTERS.deviationStandard, deviation]], REDUCERS.averageMean)
+  }
+
+  static deviationAndMedian (deviation) {
+    return new Joiner([[FILTERS.deviationStandard, deviation]], REDUCERS.averageMedian)
+  }
+
+  static mode () {
+    return new Joiner([[FILTERS.mode]], REDUCERS.mode)
+  }
 }
 
 class Aggregator extends Joiner {
-  constructor ({ filters = [], reducer }) {
+  constructor (filters, reducer) {
+    if (typeof filters === "object") {
+      reducer = filters["reducer"]
+      filters = filters["filters"]
+    }
     super(filters, reducer);
+  }
+
+  static default () {
+    return Aggregator.deviationAndAverage()
+  }
+
+  static deviationAndAverage (deviation = 1.5) {
+    return super.deviationAndAverage(deviation)
+  }
+
+  static deviationAndMedian (deviation = 1.5) {
+    return super.deviationAndMedian(deviation)
   }
 }
 
 class Tally extends Joiner {
-  constructor ({ filters = [], reducer }) {
+  constructor (filters, reducer) {
+    if (typeof filters === "object") {
+      reducer = filters["reducer"]
+      filters = filters["filters"]
+    }
     super(filters, reducer);
+  }
+
+  static default () {
+    return Tally.deviationAndAverage()
+  }
+
+  static deviationAndAverage (deviation = 2.5) {
+    return super.deviationAndAverage(deviation)
+  }
+
+  static deviationAndMedian (deviation = 2.5) {
+    return super.deviationAndMedian(deviation)
   }
 }
 
