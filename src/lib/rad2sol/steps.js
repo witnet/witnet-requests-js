@@ -1,14 +1,12 @@
 import * as Witnet from "../../..";
 import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
-import { sortObjectKeys } from "../../utils";
+import {Disabled, isRoutedQuery, matchAll, simplifyName, sortObjectKeys} from "../../utils";
 
 const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses`)
 const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
 
-function isRoutedRequest (request) {
-  return request.hasOwnProperty('bytecode')
-}
+const QUERIES_JSON_FILE_NAME = "witnet-queries.json"
 
 /*
  * THESE ARE THE DIFFERENT STEPS THAT CAN BE USED IN THE COMPILER SCRIPT.
@@ -18,16 +16,35 @@ export function tap (x) {
   return x
 }
 
-export function requestsBanner () {
+export function queriesBanner () {
   console.log(`
-Compiling your Witnet requests...
+Compiling your Witnet queries...
 =================================`)
 }
 
-export function requestsSucceed () {
+export function queriesSucceed (path, writeContracts, writeJson) {
+  let writeInfo = ''
+  if (writeContracts === Disabled && writeJson === Disabled) {
+    writeInfo = `\x1b[33m
+  WARNING: no compilation output was configured.
+  Please use one of these options to get the compilation output written to the filesystem:
+    --write-contracts          write compiled queries into Solidity contracts in the ./contracts directory
+    --write-contracts <path>   write compiled queries into Solidity contracts in the specified path
+    --write-json               write compiled queries into a JSON file in the ./migrations directory
+    --write-json <path>        write compiled queries into a JSON file in the specified path\x1b[0m`
+  } else {
+    if (writeContracts !== Disabled) {
+      writeInfo += `
+  - Solidity contracts were written to ${writeContracts}`
+    }
+    if (writeJson !== Disabled) {
+      writeInfo += `
+  - Query bytecodes were written into a JSON file in ${path.resolve(writeJson, QUERIES_JSON_FILE_NAME)}`
+    }
+  }
+
   console.log(`
-> All requests compiled successfully
-`)
+> All queries compiled successfully. ${writeInfo}`)
 }
 
 export function migrationsBanner () {
@@ -58,8 +75,8 @@ export function readFile (path, fs) {
   return fs.readFileSync(path, "utf8")
 }
 
-export function loadSchema (schemaDir, schemaName, fs) {
-  return ProtoBuf(readFile(`${schemaDir}${schemaName}.proto`, fs))
+export function loadSchema (fs, path, schemaDir, schemaName) {
+  return ProtoBuf(readFile(path.resolve(schemaDir, `${schemaName}.proto`), fs))
 }
 
 export function compile (code) {
@@ -73,7 +90,7 @@ export function compile (code) {
     }).code
 }
 
-export function execute (code, requestName, dirName, vm) {
+export function execute (code, queryName, dirName, vm) {
   const context = vm.createContext({
     module: {},
     exports: {},
@@ -87,39 +104,39 @@ export function execute (code, requestName, dirName, vm) {
   });
 
   try {
-    const request = vm.runInContext(code, context, __dirname);
-    console.log(`  - The result type of the request is \x1b[36m${Witnet.Types.typeFormat(request.dataPointType)}\x1b[0m`);
-    return request
+    const query = vm.runInContext(code, context, __dirname);
+    console.log(`  - The result type of the query is \x1b[36m${Witnet.Types.typeFormat(query.dataPointType)}\x1b[0m`);
+    return query
   } catch (e) {
     let error = e;
     if (e.message.includes("is not a export function")) {
-      error = Error(`\x1b[1m${requestName} has one of these issues:\x1b[0m\n\
+      error = Error(`\x1b[1m${queryName} has one of these issues:\x1b[0m\n\
     1: \x1b[1mIt is missing the \`export\` statement\x1b[0m\n\
-       Adding this line at the end of ${requestName} may help (please replace \`request\` by the name of your request \
+       Adding this line at the end of ${queryName} may help (please replace \`query\` by the name of your query \
 object):
-      
-         export {request as default}
+
+         export {query as default}
 
     2: \x1b[1mThe exported object is not an instance of the \`Request\` class\x1b[0m
-       Please double-check that ${requestName} contains an instance of the \`Request\` class and it is exported as \
+       Please double-check that ${queryName} contains an instance of the \`Query\` class and it is exported as \
 explained in issue 1.
-       New instances of the \`Request\` class are created like this:
+       New instances of the \`Query\` class are created like this:
 
-         const request = new Request()
-         
-       The Witnet documentation contains a complete tutorial on how to create requests from scratch:
-       https://docs.witnet.io/tutorials/bitcoin-price-feed/introduction/
-    
+         const query = new Query()
+
+       The Witnet documentation contains a complete tutorial on how to create queries from scratch:
+       https://docs.witnet.io/smart-contracts/witnet-web-oracle/make-a-get-request
+
     (Node.js error was: ${e})`
       )
     } else if (e.message.includes("is not defined")) {
       const missing = e.message.match(/(.*) is not defined/)[1];
       if (Witnet.hasOwnProperty(missing)) {
-        error = Error(`\x1b[1m${requestName} is missing an import for the \`${missing}\` module\x1b[0m
-    Adding this line at the beginning of ${requestName} may help:
-      
+        error = Error(`\x1b[1m${queryName} is missing an import for the \`${missing}\` module\x1b[0m
+    Adding this line at the beginning of ${queryName} may help:
+
          import { ${missing} } from "witnet-requests"
-    
+
     (Node.js error was: ${e})`)
       }
     }
@@ -128,18 +145,18 @@ explained in issue 1.
 }
 
 export function pack (dro) {
-  const request = dro.data.data_request;
-  const retrieve = request.retrieve.map((branch) => {
+  const query = dro.data.data_request;
+  const retrieve = query.retrieve.map((branch) => {
     return { ...branch, script: branch.encode() }
   });
-  const aggregate = request.aggregate.pack();
-  const tally = request.tally.pack();
+  const aggregate = query.aggregate.pack();
+  const tally = query.tally.pack();
 
-  return { ...dro.data, data_request: { ...request, retrieve, aggregate, tally } }
+  return { ...dro.data, data_request: { ...query, retrieve, aggregate, tally } }
 }
 
-export function intoProtoBuf (request, schema) {
-  return schema.DataRequestOutput.encode(request)
+export function intoProtoBuf (query, schema) {
+  return schema.DataRequestOutput.encode(query)
 }
 
 export function intoSol (hex, fileName) {
@@ -155,7 +172,7 @@ pragma solidity >=0.7.0 <0.9.0;
 import "witnet-solidity-bridge/contracts/impls/trustable/WitnetRequestBoardTrustableDefault.sol";
 import "witnet-solidity-bridge/contracts/requests/WitnetRequestInitializableBase.sol";
 
-// The bytecode of the ${contractName} request that will be sent to Witnet
+// The bytecode of the ${contractName} query that will be sent to Witnet
 contract ${contractName}Request is WitnetRequestInitializableBase {
   function initialize() public {
     WitnetRequestInitializableBase.initialize(hex"${hex}");
@@ -164,17 +181,17 @@ contract ${contractName}Request is WitnetRequestInitializableBase {
 `
 }
 
-export function writeRequestsList(newRequests, migrationsDir, fs) {
+export function writeQueriesToJson (fs, path, newRequests, dir) {
   let existingRequests = {}
-  const listFilePath = `${migrationsDir}witnet.requests.json`
+  const listFilePath = path.resolve(dir, QUERIES_JSON_FILE_NAME)
   if (fs.existsSync(listFilePath)) {
     existingRequests = JSON.parse(readFile(listFilePath, fs))
   }
   if (existingRequests) {
     Object.keys(newRequests).forEach((key) => {
       if (existingRequests[key]) {
-        if (isRoutedRequest(existingRequests[key]) && !isRoutedRequest(newRequests[key])) {
-          // Don't keep the bytecode field if the old request is not a routed request and the new request is
+        if (isRoutedQuery(existingRequests[key]) && !isRoutedQuery(newRequests[key])) {
+          // Don't keep the bytecode field if the old query is not a routed query and the new query is
           const { bytecode , ...validExistingRequestsFields } = existingRequests[key]
           newRequests[key] = { ...validExistingRequestsFields, ...newRequests[key] }
         } else {
@@ -183,9 +200,9 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
       }
     })
     // Make sure we don't delete any routed price feeds that have been generated manually (not present in newRequests)
-    Object.entries(existingRequests).forEach(([key, request]) => {
-      if (!newRequests[key] && !request.bytecode) {
-        newRequests[key] = request
+    Object.entries(existingRequests).forEach(([key, query]) => {
+      if (!newRequests[key] && !query.bytecode) {
+        newRequests[key] = query
       }
     })
   }
@@ -195,15 +212,24 @@ export function writeRequestsList(newRequests, migrationsDir, fs) {
   );
 }
 
-export function writeSol (sol, fileName, requestContractsDir, fs) {
+export function writeSol (fs, path, sol, fileName, writeContracts) {
   const solFileName = fileName.replace(/\.js/, ".sol");
-
-  fs.writeFileSync(`${requestContractsDir}${solFileName}`, sol);
+  fs.writeFileSync(path.resolve(writeContracts, solFileName), sol);
 
   return fileName
 }
 
-export function writeMigrations (contractNames, userContractsDir, migrationsDir, options, fs) {
+export function writeMigrations (fs, path, contractsDir, writeUserMigrations, writeWitnetMigrations) {
+  // Early escape if no migrations are required
+  if (writeUserMigrations === Disabled && writeWitnetMigrations === Disabled) {
+    return;
+  }
+
+  migrationsBanner()
+
+  const contractNames = fs.readdirSync(contractsDir)
+    .filter(exampleName => exampleName.match(/.*\.sol$/));
+
   const artifacts = contractNames
     .filter(fileName => fileName !== "Migrations.sol")
     .map(fileName => `${fileName[0].toUpperCase()}${fileName.slice(1).replace(".sol", "")}`);
@@ -226,7 +252,7 @@ export function writeMigrations (contractNames, userContractsDir, migrationsDir,
     return {...acc, ...realmEmit}
   }, {})
 
-  if (options.generateWitnetMigrations) {
+  if (writeWitnetMigrations !== Disabled) {
     const stage1 = `// WARNING: DO NOT DELETE THIS FILE
 // This file was auto-generated by the Witnet compiler, any manual changes will be overwritten.
 
@@ -284,14 +310,14 @@ module.exports = async function (deployer, network, accounts) {
   }
 }
 `;
-    fs.writeFileSync(`${migrationsDir}1_witnet_core.js`, stage1);
+    fs.writeFileSync(path.resolve(writeWitnetMigrations, "1_witnet_core.js"), stage1);
   } else {
     console.log("> \x1b[33mSkipping auto generation of migrations for Witnet core contracts.\x1b[0m")
   }
 
 
-  if (options.generateUserContractsMigrations) {
-    const userContractsArgs = readMigrationArgs(migrationsDir, fs);
+  if (writeUserMigrations !== Disabled) {
+    const userContractsArgs = readMigrationArgs(writeUserMigrations, fs);
 
     const stage2 = `// WARNING: DO NOT DELETE THIS FILE
 // This file was auto-generated by the Witnet compiler, any manual changes will be overwritten except
@@ -312,7 +338,7 @@ ${artifacts.map(artifact => {
         console.log(`> ${artifact}: reusing existing constructor arguments (${args})`);
         deployLine = userContractsArgs[artifact]
       } else {
-        const args = [artifact, ...mockSolidityArgs(readSolidityArgs(artifact, userContractsDir, fs), artifacts)];
+        const args = [artifact, ...mockSolidityArgs(readSolidityArgs(artifact, contractsDir, fs), artifacts)];
         console.log(`> ${artifact}: generating default constructor arguments (${args.slice(1).join(", ")})
   \x1b[33mWARNING: the autogenerated argument values may not make sense for the logic of the ${artifact}` +
           " contract's constructor.\n  Please make sure you customize them if needed before actually deploying anything" +
@@ -325,7 +351,8 @@ ${artifacts.map(artifact => {
     }).join("\n")}
 }
 `;
-    fs.writeFileSync(`${migrationsDir}2_user_contracts.js`, stage2)
+    fs.writeFileSync(path.resolve(writeUserMigrations, "2_user_contracts.js"), stage2)
+    migrationsSucceed()
   } else {
     console.log("> \x1b[33mSkipping auto generation of migrations for user contracts.\x1b[0m")
   }
@@ -339,8 +366,8 @@ export function readSolidityArgs (artifact, userContractsDir, fs) {
 }
 
 export function readMigrationArgs (migrationsDir, fs) {
-  fs.closeSync(fs.openSync(`${migrationsDir}2_user_contracts.js`, "a"));
-  const content = readFile(`${migrationsDir}2_user_contracts.js`, fs);
+  fs.closeSync(fs.openSync(`${migrationsDir}/2_user_contracts.js`, "a"));
+  const content = readFile(`${migrationsDir}/2_user_contracts.js`, fs);
   const regex = /^\s*(await)?\s*deployer\.deploy\([\s\n]*(\w+)[^)]*\)/mg;
 
   return matchAll(regex, content).reduce((acc, match) => ({ ...acc, [match[2]]: match[0] }), {})
@@ -387,18 +414,4 @@ export function mockSolidityArgs (args, artifacts) {
       return 0;
     }
   })
-}
-
-export function matchAll (regex, string) {
-  const matches = [];
-  while (true) {
-    const match = regex.exec(string);
-    if (match === null) break;
-    matches.push(match)
-  }
-  return matches
-}
-
-function simplifyName (name) {
-  return name.toLowerCase().replace("_", "")
 }

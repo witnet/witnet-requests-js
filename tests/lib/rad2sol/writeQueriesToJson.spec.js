@@ -1,7 +1,8 @@
-import { Steps } from '../../../../src/ethereum/truffle'
-const writeRequestsList = Steps.writeRequestsList
+import { writeQueriesToJson } from '../../../src/lib/rad2sol/steps'
 
-describe('writeRequestsList', () => {
+const path = require("path");
+
+describe('writeQueriesToJson', () => {
   describe('when requests file NOT exists', () => {
     it('should write a file in the specified route with the given price feeds', () => {
       const requests = {
@@ -18,7 +19,7 @@ describe('writeRequestsList', () => {
         readFileSync: jest.fn()
       }
 
-      writeRequestsList(requests, './', fsMock)
+      writeQueriesToJson(fsMock, path, requests, './')
 
       expect(fsMock.writeFileSync).toBeCalledWith(
         './witnet.requests.json',
@@ -67,7 +68,7 @@ describe('writeRequestsList', () => {
         readFileSync: jest.fn(() => JSON.stringify(oldRequests))
       }
 
-      writeRequestsList(newRequests, './', fsMock)
+      writeQueriesToJson(newRequests, './', fsMock)
 
       const resultRequests = {
         AdaUsdPrice: {
@@ -117,7 +118,7 @@ describe('writeRequestsList', () => {
         readFileSync: jest.fn(() => JSON.stringify(oldRequests))
       }
 
-      writeRequestsList(newRequests, './', fsMock)
+      writeQueriesToJson(newRequests, './', fsMock)
 
       const resultRequests = {
         GlintUsdPrice: {
@@ -954,7 +955,7 @@ describe('writeRequestsList', () => {
         readFileSync: jest.fn(() => JSON.stringify(existingRequests))
       }
 
-      writeRequestsList(newRequests, './', fsMock)
+      writeQueriesToJson(newRequests, './', fsMock)
 
       expect(fsMock.writeFileSync).toBeCalledWith(
         './witnet.requests.json',
@@ -979,7 +980,7 @@ describe('writeRequestsList', () => {
         readFileSync: jest.fn(() => '""')
       }
 
-      writeRequestsList(requests, './', fsMock)
+      writeQueriesToJson(requests, './', fsMock)
 
       expect(fsMock.writeFileSync).toBeCalledWith(
         './witnet.requests.json',

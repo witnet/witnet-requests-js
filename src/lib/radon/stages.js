@@ -1,6 +1,6 @@
 import * as CBOR from "cbor"
-import { Script } from ".."
-import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "../radon/types"
+import { Script } from "./script"
+import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "./types"
 
 class Source extends Script {
   constructor(kind, firstType) {
