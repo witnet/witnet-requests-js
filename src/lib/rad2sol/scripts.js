@@ -35,6 +35,14 @@ function writeSolScript (fs, path, requestsNames, writeContracts) {
   ];
 }
 
+function readCompileEncodeScript (fs, path, vm, schema, queryDir, requestsNames, requestsList) {
+  return [
+    ...readScript(fs, path, queryDir),
+    ...compileScript(vm, requestsNames),
+    ...encodeScript(schema, requestsList, requestsNames),
+  ];
+}
+
 function readCompileEncodeWriteSolScript (fs, path, vm, schema, queryDir, writeContracts, requestsList, requestsNames) {
   return [
     ...readScript(fs, path, queryDir),
@@ -49,5 +57,6 @@ export {
   compileScript,
   encodeScript,
   writeSolScript,
+  readCompileEncodeScript,
   readCompileEncodeWriteSolScript
 };

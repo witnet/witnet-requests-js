@@ -5,10 +5,13 @@
  */
 import "core-js/stable"
 import "regenerator-runtime/runtime"
+import {loadSchema} from "../lib/rad2sol/steps";
+import {readCompileEncodeScript} from "../lib/rad2sol/scripts";
 const cbor = require('cbor')
 const fs = require('fs')
 const os = require('os')
 const path = require('path')
+const vm = require('vm')
 const readline = require('readline')
 const { Radon } = require('witnet-radon-js')
 const request = require('request')
@@ -31,7 +34,7 @@ const archsMap = {
 /*
  Environment acquisition
  */
-const args = process.argv
+let args = process.argv
 const binDir = __dirname
 
 /*
@@ -116,13 +119,24 @@ https://discord.gg/2rTFYXHmPm `)
 }
 
 async function toolkitRun(settings, args) {
+  const cmd = `${settings.paths.toolkitBinPath} ${args.join(' ')}`
+  if (settings.verbose) {
+    console.log('Running >', cmd)
+  }
+
   return new Promise((resolve, reject) => {
-    exec(`${settings.paths.toolkitBinPath} ${args.join(' ')}`, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+    exec(cmd, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
         reject(error)
       }
       if (stderr) {
+        if (settings.verbose) {
+          console.log('STDERR <', stderr)
+        }
         reject(stderr)
+      }
+      if (settings.verbose) {
+        console.log('STDOUT <', stdout)
       }
       resolve(stdout)
     })
@@ -221,37 +235,70 @@ function decodeScriptsAndArguments (mir) {
   return decoded
 }
 
-async function decodeDataRequestCommand (settings, args) {
-  return fallbackCommand(settings, args)
-    .then(JSON.parse)
-    .then(decodeScriptsAndArguments)
-    .then((decoded) => JSON.stringify(decoded, null, 4))
+async function fromJavascriptTaskToHexTask (task, _i, _a) {
+  const schemaDir = path.resolve(process.cwd(), "assets");
+  const schema = loadSchema(fs, path, schemaDir, "witnet");
+  const queryDir = path.dirname(task[2])
+  const fileName = path.basename(task[2])
+  const script = readCompileEncodeScript(fs, path, vm, schema, queryDir, [fileName], [])
+  const hex = (await Promise.all(script.reduce((prev, step) => prev.map((p, i) => p.then(v => step(v, i))), [Promise.resolve(fileName)])))[0]
+
+  return [task[0], '--hex', hex]
 }
 
-async function tryDataRequestCommand (settings, args) {
-  let request, radon
+function tasksFromMatchingFiles (args, matcher) {
+  return fs.readdirSync(args[2])
+    .filter((filename) => filename.match(matcher))
+    .map((filename) => [args[0], args[1], path.join(args[2], filename)])
+}
 
+async function tasksFromArgs (args) {
   let tasks = [args]
   if (args[1] === '--from-solidity') {
-    // If no path is provided, fallback to default data request path
+    // If no path is provided, fallback to default compiled queries directory
     if (args[2] === undefined) {
-      args[2] = './contracts/requests/'
+      args[2] = './contracts/queries/'
     }
     // If the path is a directory, find `.sol` files within, and use those as tasks
     if (fs.lstatSync(args[2]).isDirectory()) {
-      tasks = fs.readdirSync(args[2])
-        .filter((filename) => filename.match(/.+.sol$/g))
-        .map((filename) => [args[0], args[1], path.join(args[2], filename)])
+      tasks = tasksFromMatchingFiles(args, /.+.sol$/g)
     }
+  } else if (args[1] === '--from-javascript') {
+    // If no path is provided, fallback to default source queries
+    if (args[2] === undefined) {
+      args[2] = './queries/'
+    }
+    // If the path is a directory, find `.js` files within, and use those as tasks
+    if (fs.lstatSync(args[2]).isDirectory()) {
+      tasks = tasksFromMatchingFiles(args, /.+.js$/g)
+    }
+    tasks = await Promise.all(tasks.map(fromJavascriptTaskToHexTask))
   }
 
+  return tasks
+}
+
+async function decodeQueryCommand (settings, args) {
+  const tasks = await tasksFromArgs(args)
+  const promises = Promise.all(tasks.map(async (task) => {
+    return fallbackCommand(settings, ['decode-query', ...task.slice(1)])
+      .then(JSON.parse)
+      .then(decodeScriptsAndArguments)
+      .then((decoded) => JSON.stringify(decoded, null, 4))
+  }))
+
+  return (await promises).join()
+}
+
+async function tryQueryCommand (settings, args) {
+  let query, radon
+  const tasks = await tasksFromArgs(args)
+
   return Promise.all(tasks.map(async (task) => {
-    const request_json = await toolkitRun(settings, ['decode-data-request', ...task.slice(1)])
-    const mir = JSON.parse(request_json)
-    request = decodeScriptsAndArguments(mir)
-
-    radon = new Radon(request)
-
+    const queryJson = await fallbackCommand(settings, ['decode-query', ...task.slice(1)])
+    const mir = JSON.parse(queryJson)
+    query = decodeScriptsAndArguments(mir)
+    radon = new Radon(query)
     const output = await fallbackCommand(settings, task)
 
     let report;
@@ -294,12 +341,12 @@ async function tryDataRequestCommand (settings, args) {
         traceInterpolation = ` |   ${sideChar}  ${red('[ERROR] Cannot decode execution trace information')}`
       }
 
-      let urlInterpolation = request ? `
+      let urlInterpolation = query ? `
  |   ${sideChar}  Method: ${radon.retrieve[sourceIndex].kind}
  |   ${sideChar}  Complete URL: ${radon.retrieve[sourceIndex].url}` : ''
 
-      // TODO: take headers info from `radon` instead of `request` once POST is supported in `witnet-radon-js`
-      const headers = request.retrieve[sourceIndex].headers
+      // TODO: take headers info from `radon` instead of `query` once POST is supported in `witnet-radon-js`
+      const headers = query.retrieve[sourceIndex].headers
       if (headers) {
         const headersInterpolation = headers.map(([key, value]) => `
  |   ${sideChar}    "${key}": "${value}"`).join()
@@ -307,8 +354,8 @@ async function tryDataRequestCommand (settings, args) {
  |   ${sideChar}  Headers: ${headersInterpolation}`
       }
 
-      // TODO: take body info from `radon` instead of `request` once POST is supported in `witnet-radon-js`
-      const body = request.retrieve[sourceIndex].body
+      // TODO: take body info from `radon` instead of `query` once POST is supported in `witnet-radon-js`
+      const body = query.retrieve[sourceIndex].body
       if (body) {
         urlInterpolation += `
  |   ${sideChar}  Body: ${Buffer.from(body)}`
@@ -317,7 +364,7 @@ async function tryDataRequestCommand (settings, args) {
       const formattedRadonResult = formatRadonValue(source.result)
       const resultInterpolation = `${yellow(formattedRadonResult[0])}: ${formattedRadonResult[1]}`
 
-      return ` │   ${cornerChar}─${green('[')} Source #${sourceIndex} ${ request ? `(${new URL(request.retrieve[sourceIndex].url).hostname})` : ''} ${green(']')}${urlInterpolation}
+      return ` │   ${cornerChar}─${green('[')} Source #${sourceIndex} ${ query ? `(${new URL(query.retrieve[sourceIndex].url).hostname})` : ''} ${green(']')}${urlInterpolation}
  |   ${sideChar}  Number of executed operators: ${source.context.call_index + 1 || 0}
  |   ${sideChar}  Execution time: ${executionTime > 0 ? executionTime + ' ms' : 'unknown'}
  |   ${sideChar}  Execution trace:\n${traceInterpolation}
@@ -378,7 +425,7 @@ ${dataSourcesInterpolation}`
     └────────────────────────────────────────────────┘`
 
     return `╔════════════════════════════════════════════╗
-║ Witnet data request local execution report ║${filenameInterpolation}
+║ Witnet query local execution report        ║${filenameInterpolation}
 ╚╤═══════════════════════════════════════════╝
 ${retrievalInterpolation}
 ${aggregationInterpolation}
@@ -387,6 +434,9 @@ ${tallyInterpolation}`
 }
 
 async function fallbackCommand (settings, args) {
+  // For compatibility reasons, map query methods to data-request methods
+  args = [args[0].replace('-query', '-data-request'), ...args.slice(1)]
+
   return toolkitRun(settings, args)
     .catch((err) => {
       let errorMessage = err.message.split('\n').slice(1).join('\n').trim()
@@ -403,10 +453,10 @@ async function fallbackCommand (settings, args) {
  Router
  */
 const router = {
-  'decode-data-request': decodeDataRequestCommand,
+  'decode-query': decodeQueryCommand,
   'fallback': fallbackCommand,
   'install': installCommand,
-  'try-data-request': tryDataRequestCommand,
+  'try-query': tryQueryCommand,
   'update': updateCommand,
 }
 
@@ -435,13 +485,22 @@ const settings = {
   system: {
     platform,
     arch,
-  }
+  },
+  verbose: false
 }
 
 /*
  Main logic
  */
 async function main () {
+  // Enter verbose mode if the --verbose flag is on
+  const verboseIndex = args.indexOf("--verbose")
+  if (verboseIndex >= 2) {
+    settings.verbose = true
+    args = [...args.slice(0, verboseIndex), ...args.slice(verboseIndex + 1)]
+  }
+
+  // Find the right command using the commands router, or default to the fallback command
   const commandName = args[2]
   let command = router[commandName] || router['fallback']
 
@@ -457,7 +516,6 @@ async function main () {
   // Run the invoked command, if any
   if (command) {
     const output = await command(settings, args.slice(2))
-
     if (output) {
       console.log(output.trim())
     }
