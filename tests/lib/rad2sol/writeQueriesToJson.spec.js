@@ -3,7 +3,7 @@ import { writeQueriesToJson } from '../../../src/lib/rad2sol/steps'
 const path = require("path");
 
 describe('writeQueriesToJson', () => {
-  describe('when requests file NOT exists', () => {
+  describe('when requests file does NOT exist', () => {
     it('should write a file in the specified route with the given price feeds', () => {
       const requests = {
         AdaUsdPrice: {
@@ -22,7 +22,7 @@ describe('writeQueriesToJson', () => {
       writeQueriesToJson(fsMock, path, requests, './')
 
       expect(fsMock.writeFileSync).toBeCalledWith(
-        './witnet.requests.json',
+        path.resolve(process.cwd(), './witnet-queries.json'),
         JSON.stringify(requests, null, 4)
       )
     })
@@ -68,7 +68,7 @@ describe('writeQueriesToJson', () => {
         readFileSync: jest.fn(() => JSON.stringify(oldRequests))
       }
 
-      writeQueriesToJson(newRequests, './', fsMock)
+      writeQueriesToJson(fsMock, path, newRequests, './')
 
       const resultRequests = {
         AdaUsdPrice: {
@@ -91,7 +91,7 @@ describe('writeQueriesToJson', () => {
         }
       }
       expect(fsMock.writeFileSync).toBeCalledWith(
-        './witnet.requests.json',
+        path.resolve(process.cwd(), './witnet-queries.json'),
         JSON.stringify(resultRequests, null, 4)
       )
     })
@@ -118,7 +118,7 @@ describe('writeQueriesToJson', () => {
         readFileSync: jest.fn(() => JSON.stringify(oldRequests))
       }
 
-      writeQueriesToJson(newRequests, './', fsMock)
+      writeQueriesToJson(fsMock, path, newRequests, './')
 
       const resultRequests = {
         GlintUsdPrice: {
@@ -128,7 +128,7 @@ describe('writeQueriesToJson', () => {
         }
       }
       expect(fsMock.writeFileSync).toBeCalledWith(
-        './witnet.requests.json',
+        path.resolve(process.cwd(), './witnet-queries.json'),
         JSON.stringify(resultRequests, null, 4)
       )
     })
@@ -955,10 +955,10 @@ describe('writeQueriesToJson', () => {
         readFileSync: jest.fn(() => JSON.stringify(existingRequests))
       }
 
-      writeQueriesToJson(newRequests, './', fsMock)
+      writeQueriesToJson(fsMock, path, newRequests, './')
 
       expect(fsMock.writeFileSync).toBeCalledWith(
-        './witnet.requests.json',
+        path.resolve(process.cwd(), './witnet-queries.json'),
         JSON.stringify(expectedResult, null, 4)
       )
     })
@@ -980,10 +980,10 @@ describe('writeQueriesToJson', () => {
         readFileSync: jest.fn(() => '""')
       }
 
-      writeQueriesToJson(requests, './', fsMock)
+      writeQueriesToJson(fsMock, path, requests, './')
 
       expect(fsMock.writeFileSync).toBeCalledWith(
-        './witnet.requests.json',
+        path.resolve(process.cwd(), './witnet-queries.json'),
         JSON.stringify(requests, null, 4)
       )
     })
