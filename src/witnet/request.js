@@ -1,3 +1,5 @@
+import {FILTERS, REDUCERS} from "../radon/types";
+
 class Request {
   constructor () {
     this.data = {
@@ -21,12 +23,47 @@ class Request {
     return this
   }
   setAggregator (aggregator) {
-    this.data.data_request.aggregate = aggregator || this.data.data_request.aggregate;
+    if (aggregator instanceof Function) aggregator = aggregator();
+
+    // Reject unsupported reducers
+    if (!(Object.values(REDUCERS).includes(aggregator.reducer))) {
+      throw Error(`Aggregator error. Reducer ${aggregator.reducer} is not supported. Please choose one of: ${["", ...Object.keys(REDUCERS)].join(`\n    - Witnet.Types.REDUCERS.`)}`)
+    }
+
+    for (let [index, filter] of aggregator.filters.entries()) {
+      // Sanitize malformed filters
+      if (!(Array.isArray(filter))) {
+        filter = aggregator.filters[index] = [filter]
+      }
+      // Reject unsupported filters
+      if (!(Object.values(FILTERS).includes(filter[0]))) {
+        throw Error(`Aggregator error. Filter ${filter[0]} is not supported. Please choose one of: ${["", ...Object.keys(FILTERS)].join(`\n    - Witnet.Types.FILTERS.`)}`)
+      }
+    }
+
+    this.data.data_request.aggregate = aggregator;
 
     return this
   }
   setTally (tally) {
-    this.data.data_request.tally = tally || this.data.data_request.tally;
+    if (tally instanceof Function) tally = tally();
+
+    // Reject unsupported reducers
+    if (!(Object.values(REDUCERS).includes(tally.reducer))) {
+      throw Error(`Tally error. Reducer ${tally.reducer} is not supported. Please choose one of: ${["", ...Object.keys(REDUCERS)].join(`\n    - Witnet.Types.REDUCERS.`)}`)
+    }
+
+    for (let [index, filter] of tally.filters.entries()) {
+      // Sanitize malformed filters
+      if (!(Array.isArray(filter))) {
+        filter = tally.filters[index] = [filter]
+      }
+      // Reject unsupported filters
+      if (!(Object.values(FILTERS).includes(filter[0]))) {
+        throw Error(`Tally error. Filter ${filter[0]} is not supported. Please choose one of: ${["", ...Object.keys(FILTERS)].join(`\n    - Witnet.Types.FILTERS.`)}`)
+      }
+    }
+    this.data.data_request.tally = tally;
 
     return this
   }
