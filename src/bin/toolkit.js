@@ -435,7 +435,9 @@ ${tallyInterpolation}`
 
 async function fallbackCommand (settings, args) {
   // For compatibility reasons, map query methods to data-request methods
-  args = [args[0].replace('-query', '-data-request'), ...args.slice(1)]
+  if (args.length > 0) {
+    args = [args[0].replace('-query', '-data-request'), ...args.slice(1)]
+  }
 
   return toolkitRun(settings, args)
     .catch((err) => {
