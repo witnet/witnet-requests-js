@@ -55,7 +55,7 @@ class Joiner {
     }
   }
 
-  static deviationAndAverage (deviation) {
+  static deviationAndMean (deviation) {
     return new Joiner([[FILTERS.deviationStandard, deviation]], REDUCERS.averageMean)
   }
 
@@ -78,11 +78,11 @@ class Aggregator extends Joiner {
   }
 
   static default () {
-    return Aggregator.deviationAndAverage()
+    return Aggregator.deviationAndMean()
   }
 
-  static deviationAndAverage (deviation = 1.5) {
-    return super.deviationAndAverage(deviation)
+  static deviationAndMean (deviation = 1.5) {
+    return super.deviationAndMean(deviation)
   }
 
   static deviationAndMedian (deviation = 1.5) {
@@ -100,11 +100,11 @@ class Tally extends Joiner {
   }
 
   static default () {
-    return Tally.deviationAndAverage()
+    return Tally.deviationAndMean()
   }
 
-  static deviationAndAverage (deviation = 2.5) {
-    return super.deviationAndAverage(deviation)
+  static deviationAndMean (deviation = 2.5) {
+    return super.deviationAndMean(deviation)
   }
 
   static deviationAndMedian (deviation = 2.5) {
