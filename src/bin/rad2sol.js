@@ -36,6 +36,6 @@ Promise.all(script.reduce(
   (prev, step) => prev.map((p, i) => p.then(v => step(v, i))),
   queriesNames.map(fileName => Promise.resolve(fileName))))
     .then(() => queriesSucceed(path, writeContracts, writeJson))
-    .then(() => { if (writeJson) { writeQueriesToJson(fs, path, queriesList, writeJson) } })
+    .then(() => { if (writeJson !== Utils.Disabled) { writeQueriesToJson(fs, path, queriesList, writeJson) } })
     .then(() => writeMigrations(fs, path, contractsDir, writeUserMigrations, writeWitnetMigrations))
     .catch(fail);
