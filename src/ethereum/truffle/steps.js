@@ -42,12 +42,16 @@ export function migrationsSucceed () {
 `)
 }
 
-export function fail (error) {
+export function fail (error, process, verbose) {
+  process.exitCode = 1;
+
   console.error(`
 ! \x1b[31mWITNET REQUESTS COMPILATION ERRORS:\x1b[0m
-  - ${error.message}`);
-  process.exitCode = 1;
-  throw error
+- ${error.message}`);
+
+  if (verbose) {
+    throw error
+  }
 }
 
 export function readFile (path, fs) {

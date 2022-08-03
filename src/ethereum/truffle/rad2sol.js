@@ -10,6 +10,8 @@ const {
   requestsBanner, requestsSucceed, writeMigrations, writeSol
 } = require("../../../dist/ethereum/truffle/steps");
 
+const verbose = process.argv.includes('--verbose')
+
 const requestsDir = "./requests/";
 const requestContractsDir = "./contracts/requests/";
 const userContractsDir = "./contracts/";
@@ -58,4 +60,4 @@ Promise.all(steps.reduce(
     .then(() => writeMigrations(contractNames, userContractsDir, migrationsDir, { generateUserContractsMigrations, generateWitnetMigrations }, fs))
     .then(() => { if (generateRequestsList) { writeRequestsList(requestsList, migrationsDir, fs) } })
     .then(() => { if (generateUserContractsMigrations || generateWitnetMigrations) { migrationsSucceed() } })
-    .catch(fail);
+    .catch((error) => fail(error, process, verbose));
