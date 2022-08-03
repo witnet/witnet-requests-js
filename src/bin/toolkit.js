@@ -274,6 +274,8 @@ async function tasksFromArgs (args) {
     }
     tasks = await Promise.all(tasks.map(fromJavascriptTaskToHexTask))
   }
+  // Ensure that no task contains arguments starting with `0x`
+  tasks.forEach(args => args[2] = args[2].replace(/^0x/gm, ''))
 
   return tasks
 }
