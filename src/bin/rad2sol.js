@@ -12,7 +12,7 @@ const asPath = Utils.formatPath(path);
 
 const {fail, loadSchema, queriesBanner, queriesSucceed, writeMigrations, writeQueriesToJson} = require("../lib/rad2sol/steps");
 
-const queryDir = argv("target", "./witnet");
+const queryDir = argv("target", "./witnet", true);
 const contractsDir = argv("contracts", "./contracts", true);
 
 const writeContracts = asPath(argv("write-contracts", "./contracts/witnet"));
