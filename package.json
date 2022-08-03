@@ -8,8 +8,8 @@
   "license": "MIT",
   "private": false,
   "bin": {
-    "rad2sol": "dist/ethereum/truffle/rad2sol.js",
-    "witnet-toolkit": "dist/witnet/toolkit.js"
+    "rad2sol": "dist/bin/rad2sol.js",
+    "witnet-toolkit": "dist/bin/toolkit.js"
   },
   "scripts": {
     "build": "babel src -d dist",
