@@ -236,7 +236,7 @@ function decodeScriptsAndArguments (mir) {
 }
 
 async function fromJavascriptTaskToHexTask (task, _i, _a) {
-  const schemaDir = path.resolve(process.cwd(), "assets");
+  const schemaDir = path.resolve(__dirname, "../../assets");
   const schema = loadSchema(fs, path, schemaDir, "witnet");
   const queryDir = path.dirname(task[2])
   const fileName = path.basename(task[2])

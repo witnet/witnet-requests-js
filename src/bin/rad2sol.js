@@ -20,7 +20,7 @@ const writeUserMigrations = asPath(argv("write-user-migrations", "./migrations")
 const writeWitnetMigrations = asPath(argv("write-witnet-migrations", "./migrations"));
 const writeJson = asPath(argv("write-json", "./migrations"));
 
-const schemaDir = path.resolve(process.cwd(), "assets");
+const schemaDir = path.resolve(__dirname, "../../assets");
 const schema = loadSchema(fs, path, schemaDir, "witnet");
 
 const queriesNames = fs.readdirSync(queryDir)
