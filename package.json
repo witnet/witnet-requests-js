@@ -7,6 +7,9 @@
   "author": "Witnet Foundation",
   "license": "MIT",
   "private": false,
+  "files": [
+    "dist"
+  ],
   "bin": {
     "rad2sol": "dist/bin/rad2sol.js",
     "witnet-toolkit": "dist/bin/toolkit.js"
