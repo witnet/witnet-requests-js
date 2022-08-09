@@ -8,6 +8,7 @@
   "license": "MIT",
   "private": false,
   "files": [
+    "assets/witnet.proto",
     "dist"
   ],
   "bin": {
