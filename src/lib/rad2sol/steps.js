@@ -95,7 +95,7 @@ export function execute (code, queryName, dirName, vm) {
     module: {},
     exports: {},
     require: (depName) => {
-      if (["witnet-requests", "witnet-request", "witnet"].indexOf(depName) >= 0) {
+      if (["witnet-requests", "witnet-request", "witnet"].includes(depName)) {
         return Witnet
       } else {
         return require(depName)

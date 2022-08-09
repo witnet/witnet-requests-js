@@ -12,6 +12,8 @@ const asPath = Utils.formatPath(path);
 
 const {fail, loadSchema, queriesBanner, queriesSucceed, writeMigrations, writeQueriesToJson} = require("../lib/rad2sol/steps");
 
+const verbose = process.argv.includes('--verbose')
+
 const queryDir = argv("target", "./witnet", true);
 const contractsDir = argv("contracts", "./contracts", true);
 
@@ -38,4 +40,4 @@ Promise.all(script.reduce(
     .then(() => queriesSucceed(path, writeContracts, writeJson))
     .then(() => { if (writeJson !== Utils.Disabled) { writeQueriesToJson(fs, path, queriesList, writeJson) } })
     .then(() => writeMigrations(fs, path, contractsDir, writeUserMigrations, writeWitnetMigrations))
-    .catch(fail);
+    .catch((error) => fail(error, process, verbose));

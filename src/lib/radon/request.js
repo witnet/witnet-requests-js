@@ -1,4 +1,4 @@
-import {FILTERS, REDUCERS} from "../radon/types";
+import {FILTERS, REDUCERS} from "./types";
 
 class Request {
   constructor () {

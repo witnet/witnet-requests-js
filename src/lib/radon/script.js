@@ -1,4 +1,4 @@
-import * as CBOR from "cbor"
+import * as CBOR from "cbor";
 import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./types";
 
 function unpackArgs(args) {
