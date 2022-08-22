@@ -20,6 +20,10 @@ function formatPath (path) {
   }
 }
 
+function graphQlSanitize (query) {
+  return query.replace(/[\r\n\s\t]/g, "")
+}
+
 function isRoutedQuery (query) {
   return query.hasOwnProperty('bytecode')
 }
@@ -62,6 +66,7 @@ export {
   matchAll,
   Disabled,
   formatPath,
+  graphQlSanitize,
   isRoutedQuery,
   processArgv,
   simplifyName,

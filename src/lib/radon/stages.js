@@ -1,6 +1,7 @@
 import * as CBOR from "cbor";
 import { Script } from "./script";
 import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "./types";
+import { graphQlSanitize } from "../../utils";
 
 class Source extends Script {
   constructor(kind, firstType) {
@@ -27,7 +28,8 @@ class HttpPostSource extends Source {
 }
 
 class GraphQLSource extends HttpPostSource {
-  constructor (url, query, headers) {
+  constructor (url, rawQuery, headers) {
+    const query = graphQlSanitize(rawQuery);
     super(url, JSON.stringify({ query }), headers);
   }
 }
