@@ -1,3 +1,5 @@
+import graphQlCompress from "graphql-query-compress"
+
 function matchAll (regex, string) {
   const matches = [];
   while (true) {
@@ -21,7 +23,7 @@ function formatPath (path) {
 }
 
 function graphQlSanitize (query) {
-  return query.replace(/[\r\n\s\t]/g, "")
+  return graphQlCompress(query)
 }
 
 function isRoutedQuery (query) {
