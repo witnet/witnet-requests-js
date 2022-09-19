@@ -4,6 +4,7 @@ import {readCompileEncodeWriteSolScript} from "../lib/rad2sol/scripts";
 import * as Utils from "../utils";
 
 const fs = require("fs");
+const glob = require("glob");
 const path = require("path");
 const vm = require("vm");
 
@@ -25,12 +26,17 @@ const writeJson = asPath(argv("write-json", "./migrations"));
 const schemaDir = path.resolve(__dirname, "../../assets");
 const schema = loadSchema(fs, path, schemaDir, "witnet");
 
-const queriesNames = fs.readdirSync(queryDir)
-  .filter(fileName => fileName.match(/.*\.js$/));
+const queriesNames = glob.sync(queryDir, {}).reduce((acc, queryPath) => {
+  if ((fs.lstatSync(queryPath)).isFile()) {
+    acc.push(path.resolve(queryPath));
+    return acc;
+  } else {
+    return acc.concat(glob.sync(`${queryPath}*.js`).map(x => path.resolve(x)));
+  }
+}, []);
+const queriesList = {}
 
-let queriesList = {}
-
-const script = readCompileEncodeWriteSolScript(fs, path, vm, schema, queryDir, writeContracts, queriesList, queriesNames);
+const script = readCompileEncodeWriteSolScript(fs, path, vm, schema, writeContracts, queriesList, queriesNames);
 
 queriesBanner();
 

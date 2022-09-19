@@ -1,54 +1,53 @@
 import {compile, execute, intoProtoBuf, intoSol, pack, readFile, writeSol} from "./steps";
 import {Disabled} from "../../utils";
 
-function readScript (fs, path, queryDir) {
+function readScript (fs) {
   return [
-    fileName => path.resolve(queryDir, fileName),
     filePath => { console.log(`> Compiling ${filePath}`); return filePath },
     filePath => readFile(filePath, fs),
   ];
 }
 
-function compileScript (vm, requestNames) {
+function compileScript (vm, requestPaths) {
   return [
     compile,
-    (code, i) => execute(code, requestNames[i], process.env.PWD, vm),
+    (code, i) => execute(code, requestPaths[i], process.env.PWD, vm),
     pack,
   ];
 }
 
-function encodeScript (schema, requestsList, requestsNames) {
+function encodeScript (path, schema, requestsList, requestPaths) {
   return [
     (request) => intoProtoBuf(request, schema),
     buff => buff.toString("hex"),
     (hex, i) => {
-      requestsList[requestsNames[i].replace(/\.js/, "")] = { bytecode: `0x${hex}` }
+      requestsList[path.basename(requestPaths[i]).replace(/\.js/, "")] = { bytecode: `0x${hex}` }
       return hex
     }
   ];
 }
 
-function writeSolScript (fs, path, requestsNames, writeContracts) {
+function writeSolScript (fs, path, requestPaths, writeContracts) {
   return [
-    (hex, i) => intoSol(hex, requestsNames[i]),
-    (sol, i) => { if (writeContracts !== Disabled) { writeSol(fs, path, sol, requestsNames[i], writeContracts) } },
+    (hex, i) => intoSol(hex, path.basename(requestPaths[i])),
+    (sol, i) => { if (writeContracts !== Disabled) { writeSol(fs, path, sol, path.basename(requestPaths[i]), writeContracts) } },
   ];
 }
 
-function readCompileEncodeScript (fs, path, vm, schema, queryDir, requestsNames, requestsList) {
+function readCompileEncodeScript (fs, path, vm, schema, requestPaths, requestsList) {
   return [
     ...readScript(fs, path, queryDir),
-    ...compileScript(vm, requestsNames),
-    ...encodeScript(schema, requestsList, requestsNames),
+    ...compileScript(vm, requestPaths),
+    ...encodeScript(path, schema, requestsList, requestPaths),
   ];
 }
 
-function readCompileEncodeWriteSolScript (fs, path, vm, schema, queryDir, writeContracts, requestsList, requestsNames) {
+function readCompileEncodeWriteSolScript (fs, path, vm, schema, writeContracts, requestsList, requestsPaths) {
   return [
-    ...readScript(fs, path, queryDir),
-    ...compileScript(vm, requestsNames),
-    ...encodeScript(schema, requestsList, requestsNames),
-    ...writeSolScript(fs, path, requestsNames, writeContracts),
+    ...readScript(fs),
+    ...compileScript(vm, requestsPaths),
+    ...encodeScript(path, schema, requestsList, requestsPaths),
+    ...writeSolScript(fs, path, requestsPaths, writeContracts),
   ];
 }
 
