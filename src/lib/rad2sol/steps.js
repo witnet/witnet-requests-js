@@ -3,8 +3,8 @@ import * as Babel from "@babel/core/lib/transform";
 import ProtoBuf from "protocol-buffers"
 import {Disabled, isRoutedQuery, matchAll, simplifyName, sortObjectKeys} from "../../utils";
 
-const witnetAddresses = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.addresses`)
-const witnetSettings = require(`${process.cwd()}/node_modules/witnet-solidity-bridge/migrations/witnet.settings`)
+const witnetAddresses = require(`../../../assets/witnet.addresses`)
+const witnetSettings = require(`../../../assets/witnet.settings`)
 
 const QUERIES_JSON_FILE_NAME = "witnet-queries.json"
 

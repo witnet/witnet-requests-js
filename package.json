@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "files": [
-    "assets/witnet.proto",
+    "assets/witnet.*",
     "dist"
   ],
   "bin": {
@@ -18,11 +18,13 @@
   "scripts": {
     "build": "babel src -d dist",
     "compile": "npm run build",
-    "prepare": "npm run build",
+    "postinstall": "cp node_modules/witnet-solidity-bridge/migrations/witnet.* ./assets",
+    "prepare": "npm run postinstall && npm run build",
     "test": "jest"
   },
   "devDependencies": {
-    "jest": "^28.1.0"
+    "jest": "^28.1.0",
+    "witnet-solidity-bridge": "^0.5.1"
   },
   "dependencies": {
     "@babel/cli": "^7.5.5",
@@ -34,7 +36,6 @@
     "protocol-buffers": "^4.1.0",
     "regenerator-runtime": "^0.13.9",
     "request": "^2.88.2",
-    "witnet-radon-js": "^0.8.4",
-    "witnet-solidity-bridge": "^0.5.1"
+    "witnet-radon-js": "^0.8.4"
   }
 }
