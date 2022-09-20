@@ -159,8 +159,8 @@ export function intoProtoBuf (query, schema) {
   return schema.DataRequestOutput.encode(query)
 }
 
-export function intoSol (hex, fileName) {
-  const contractName = fileName.replace(/\.js/, "");
+export function intoSol (queryName, query) {
+  const contractName = queryName;
 
   return `// SPDX-License-Identifier: MIT
 
@@ -175,48 +175,48 @@ import "witnet-solidity-bridge/contracts/requests/WitnetRequestInitializableBase
 // The bytecode of the ${contractName} query that will be sent to Witnet
 contract ${contractName}Request is WitnetRequestInitializableBase {
   function initialize() public {
-    WitnetRequestInitializableBase.initialize(hex"${hex}");
+    WitnetRequestInitializableBase.initialize(hex"${query.hex}");
   }
 }
 `
 }
 
-export function writeQueriesToJson (fs, path, newRequests, dir) {
-  let existingRequests = {}
+export function writeQueriesToJson (fs, path, newQueries, dir) {
+  let existingQueries = {}
   const listFilePath = path.resolve(dir, QUERIES_JSON_FILE_NAME)
   if (fs.existsSync(listFilePath)) {
-    existingRequests = JSON.parse(readFile(listFilePath, fs))
+    existingQueries = JSON.parse(readFile(listFilePath, fs))
   }
-  if (existingRequests) {
-    Object.keys(newRequests).forEach((key) => {
-      if (existingRequests[key]) {
-        if (isRoutedQuery(existingRequests[key]) && !isRoutedQuery(newRequests[key])) {
+  if (existingQueries) {
+    Object.keys(newQueries).forEach((key) => {
+      if (existingQueries[key]) {
+        if (isRoutedQuery(existingQueries[key]) && !isRoutedQuery(newQueries[key])) {
           // Don't keep the bytecode field if the old query is not a routed query and the new query is
-          const { bytecode , ...validExistingRequestsFields } = existingRequests[key]
-          newRequests[key] = { ...validExistingRequestsFields, ...newRequests[key] }
+          const { bytecode , ...validExistingRequestsFields } = existingQueries[key]
+          newQueries[key] = { ...validExistingRequestsFields, ...newQueries[key] }
         } else {
-          newRequests[key] = { ...existingRequests[key], ...newRequests[key] }
+          newQueries[key] = { ...existingQueries[key], ...newQueries[key] }
         }
       }
     })
     // Make sure we don't delete any routed price feeds that have been generated manually (not present in newRequests)
-    Object.entries(existingRequests).forEach(([key, query]) => {
-      if (!newRequests[key] && !query.bytecode) {
-        newRequests[key] = query
+    Object.entries(existingQueries).forEach(([key, query]) => {
+      if (!newQueries[key] && !query.bytecode) {
+        newQueries[key] = query
       }
     })
   }
   fs.writeFileSync(
     listFilePath,
-    JSON.stringify(sortObjectKeys(newRequests), null, 4)
+    JSON.stringify(sortObjectKeys(newQueries), null, 4)
   );
 }
 
-export function writeSol (fs, path, sol, fileName, writeContracts) {
-  const solFileName = fileName.replace(/\.js/, ".sol");
+export function writeSol (fs, path, sol, writeContracts, queryName) {
+  const solFileName = `${queryName}.sol`;
   fs.writeFileSync(path.resolve(writeContracts, solFileName), sol);
 
-  return fileName
+  return queryName
 }
 
 export function writeMigrations (fs, path, contractsDir, writeUserMigrations, writeWitnetMigrations) {

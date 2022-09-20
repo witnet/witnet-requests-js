@@ -26,24 +26,36 @@ const writeJson = asPath(argv("write-json", "./migrations"));
 const schemaDir = path.resolve(__dirname, "../../assets");
 const schema = loadSchema(fs, path, schemaDir, "witnet");
 
-const queriesNames = glob.sync(queryDir, {}).reduce((acc, queryPath) => {
-  if ((fs.lstatSync(queryPath)).isFile()) {
-    acc.push(path.resolve(queryPath));
-    return acc;
-  } else {
-    return acc.concat(glob.sync(`${queryPath}*.js`).map(x => path.resolve(x)));
-  }
-}, []);
-const queriesList = {}
+function addQuery(acc, rawPath) {
+  let resolvedPath = path.resolve(rawPath);
+  let queryName = path.basename(rawPath).split('.')[0];
 
-const script = readCompileEncodeWriteSolScript(fs, path, vm, schema, writeContracts, queriesList, queriesNames);
+  const existing = acc[queryName];
+  if (existing) {
+    const error =  Error(`Duplicated query name "${queryName}. Please rename one of the following files:\n  - First occurrence at ${existing.path}\n  - Found repetition at ${resolvedPath}`);
+    fail(error, process, true);
+  } else {
+    acc[queryName] = { bytecode: null, path: rawPath };
+  }
+}
+
+const queries = glob.sync(queryDir, {}).reduce((acc, rawPath) => {
+  if ((fs.lstatSync(rawPath)).isFile()) {
+    addQuery(acc, rawPath)
+  } else {
+    glob.sync(path.resolve(rawPath, "*.js")).forEach(rawPath => addQuery(acc, rawPath));
+  }
+  return acc;
+}, {});
+
+const script = readCompileEncodeWriteSolScript(fs, path, vm, schema, writeContracts, queries);
 
 queriesBanner();
 
 Promise.all(script.reduce(
   (prev, step) => prev.map((p, i) => p.then(v => step(v, i))),
-  queriesNames.map(fileName => Promise.resolve(fileName))))
+  Object.values(queries).map(fileName => Promise.resolve(fileName))))
     .then(() => queriesSucceed(path, writeContracts, writeJson))
-    .then(() => { if (writeJson !== Utils.Disabled) { writeQueriesToJson(fs, path, queriesList, writeJson) } })
+    .then(() => { if (writeJson !== Utils.Disabled) { writeQueriesToJson(fs, path, queries, writeJson) } })
     .then(() => writeMigrations(fs, path, contractsDir, writeUserMigrations, writeWitnetMigrations))
     .catch((error) => fail(error, process, verbose));
