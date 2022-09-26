@@ -1,6 +1,6 @@
 {
   "name": "witnet-requests",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Witnet Requests Lib",
   "main": "dist/index.js",
   "repository": "https://github.com/witnet/witnet-requests-js",
@@ -18,8 +18,7 @@
   "scripts": {
     "build": "babel src -d dist",
     "compile": "npm run build",
-    "postinstall": "cp node_modules/witnet-solidity-bridge/migrations/witnet.* ./assets",
-    "prepare": "npm run postinstall && npm run build",
+    "prepare": "cp node_modules/witnet-solidity-bridge/migrations/witnet.* ./assets && npm run build",
     "test": "jest"
   },
   "devDependencies": {
