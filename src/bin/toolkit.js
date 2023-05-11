@@ -181,26 +181,23 @@ function yellow (string) {
  */
 async function installCommand (settings) {
   if (!settings.checks.toolkitIsDownloaded) {
-    console.log(`The witnet_toolkit native binary hasn't been downloaded yet (this is a requirement).`)
-    const will = await prompt("Do you want to download it now? (Y/n)")
+    // Skip confirmation if install is forced
+    if (!settings.force) {
+      console.log(`The witnet_toolkit native binary hasn't been downloaded yet (this is a requirement).`)
+      const will = await prompt("Do you want to download it now? (Y/n)")
 
-    if (['', 'y'].includes(will.toLowerCase())) {
-      return downloadToolkit(
-        settings.paths.toolkitFileName,
-        settings.paths.toolkitBinPath,
-        settings.system.platform,
-        settings.system.arch
-      )
-        .catch((err) => {
-          console.error(`Error downloading witnet_toolkit binary:`, err)
-        })
-    } else {
-      console.error('Aborted download of witnet_toolkit native binary.')
+      // Abort if not confirmed
+      if (!['', 'y'].includes(will.toLowerCase())) {
+        console.error('Aborted download of witnet_toolkit native binary.')
+        return
+      }
     }
+
+    return forcedInstallCommand(settings)
   }
 }
 
-async function updateCommand (settings) {
+async function forcedInstallCommand (settings) {
   return downloadToolkit(
     settings.paths.toolkitFileName,
     settings.paths.toolkitBinPath,
@@ -459,9 +456,9 @@ async function fallbackCommand (settings, args) {
 const router = {
   'decode-query': decodeQueryCommand,
   'fallback': fallbackCommand,
-  'install': installCommand,
+  'install': forcedInstallCommand,
   'try-query': tryQueryCommand,
-  'update': updateCommand,
+  'update': forcedInstallCommand,
 }
 
 /*
@@ -473,6 +470,7 @@ const arch = guessArch()
 const toolkitFileName = guessToolkitFileName(platform, arch)
 const toolkitBinPath = guessToolkitBinPath(toolkitDirPath, platform, arch)
 const toolkitIsDownloaded = checkToolkitIsDownloaded(toolkitBinPath);
+const force = args.indexOf('--force') >= 2
 
 /*
  Settings composition
@@ -490,7 +488,8 @@ const settings = {
     platform,
     arch,
   },
-  verbose: false
+  verbose: false,
+  force,
 }
 
 /*
@@ -508,9 +507,12 @@ async function main () {
   const commandName = args[2]
   let command = router[commandName] || router['fallback']
 
-  // Always run base command before anything else, mainly to ensure that the witnet_toolkit binary
-  // has been downloaded
-  await router['install'](settings)
+  // Run command before anything else, mainly to ensure that the witnet_toolkit binary
+  // has been downloaded.
+  // Skip if we are intentionally installing or updating the toolkit.
+  if (!['install', 'update'].includes(commandName)) {
+    await installCommand(settings)
+  }
 
   // Make sure that commands with --help are always passed through
   if (args.includes("--help")) {
