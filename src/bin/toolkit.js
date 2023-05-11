@@ -21,11 +21,17 @@ const { exec } = require("child_process")
 /*
  Constants
  */
-const toolkitDownloadUrlBase = "https://github.com/witnet/witnet-rust/releases/download/1.5.2/"
-const toolkitFileNames = {
+const version = '1.5.6'
+const toolkitDownloadUrlBase = `https://github.com/witnet/witnet-rust/releases/download/${version}/`
+const toolkitDownloadNames = {
   win32: (arch) => `witnet_toolkit-${arch}-pc-windows-msvc.exe`,
   linux: (arch) => `witnet_toolkit-${arch}-unknown-linux-gnu${arch.includes("arm") ? "eabihf" : ""}`,
   darwin: (arch) => `witnet_toolkit-${arch}-apple-darwin`,
+}
+const toolkitFileNames = {
+  win32: (arch) => `witnet_toolkit-${version}-${arch}-pc-windows-msvc.exe`,
+  linux: (arch) => `witnet_toolkit-${version}-${arch}-unknown-linux-gnu${arch.includes("arm") ? "eabihf" : ""}`,
+  darwin: (arch) => `witnet_toolkit-${version}-${arch}-apple-darwin`,
 }
 const archsMap = {
   x64: 'x86_64'
@@ -48,6 +54,10 @@ function guessArch () {
   const rawArch = os.arch()
 
   return archsMap[rawArch] || rawArch
+}
+
+function guessToolkitDownloadName (platform, arch) {
+  return (toolkitDownloadNames[platform] || toolkitDownloadNames['linux'])(arch)
 }
 
 function guessToolkitFileName (platform, arch) {
@@ -82,8 +92,8 @@ function guessDownloadUrl(toolkitFileName) {
   return `${toolkitDownloadUrlBase}${toolkitFileName}`
 }
 
-async function downloadToolkit (toolkitFileName, toolkitBinPath, platform, arch) {
-  const downloadUrl = guessDownloadUrl(toolkitFileName)
+async function downloadToolkit (toolkitDownloadName, toolkitFileName, toolkitBinPath, platform, arch) {
+  const downloadUrl = guessDownloadUrl(toolkitDownloadName)
   console.log('Downloading', downloadUrl, 'into', toolkitBinPath)
 
   const file = fs.createWriteStream(toolkitBinPath)
@@ -183,7 +193,7 @@ async function installCommand (settings) {
   if (!settings.checks.toolkitIsDownloaded) {
     // Skip confirmation if install is forced
     if (!settings.force) {
-      console.log(`The witnet_toolkit native binary hasn't been downloaded yet (this is a requirement).`)
+      console.log(`The witnet_toolkit ${version} native binary hasn't been downloaded yet (this is a requirement).`)
       const will = await prompt("Do you want to download it now? (Y/n)")
 
       // Abort if not confirmed
@@ -199,6 +209,7 @@ async function installCommand (settings) {
 
 async function forcedInstallCommand (settings) {
   return downloadToolkit(
+    settings.paths.toolkitDownloadName,
     settings.paths.toolkitFileName,
     settings.paths.toolkitBinPath,
     settings.system.platform,
@@ -467,6 +478,7 @@ const router = {
 const toolkitDirPath = path.resolve(binDir, '../../assets/')
 const platform = guessPlatform()
 const arch = guessArch()
+const toolkitDownloadName = guessToolkitDownloadName(platform, arch)
 const toolkitFileName = guessToolkitFileName(platform, arch)
 const toolkitBinPath = guessToolkitBinPath(toolkitDirPath, platform, arch)
 const toolkitIsDownloaded = checkToolkitIsDownloaded(toolkitBinPath);
@@ -479,6 +491,7 @@ const settings = {
   paths: {
     toolkitBinPath,
     toolkitDirPath,
+    toolkitDownloadName,
     toolkitFileName,
   },
   checks: {
