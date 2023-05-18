@@ -482,7 +482,15 @@ const toolkitDownloadName = guessToolkitDownloadName(platform, arch)
 const toolkitFileName = guessToolkitFileName(platform, arch)
 const toolkitBinPath = guessToolkitBinPath(toolkitDirPath, platform, arch)
 const toolkitIsDownloaded = checkToolkitIsDownloaded(toolkitBinPath);
-const force = args.indexOf('--force') >= 2
+
+// Process `--force` flag
+let force;
+let forceIndex = args.indexOf('--force');
+if (forceIndex >= 2) {
+  // If the `--force` flag is found, process it, but remove it from args so it doesn't get passed down to the binary
+  force = args[forceIndex]
+  args.splice(forceIndex, 1)
+}
 
 /*
  Settings composition
