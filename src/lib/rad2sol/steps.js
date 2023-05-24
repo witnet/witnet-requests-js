@@ -175,7 +175,7 @@ import "witnet-solidity-bridge/contracts/requests/WitnetRequestInitializableBase
 // The bytecode of the ${contractName} query that will be sent to Witnet
 contract ${contractName}Request is WitnetRequestInitializableBase {
   function initialize() public {
-    WitnetRequestInitializableBase.initialize(hex"${query.hex}");
+    WitnetRequestInitializableBase.initialize(hex"${query}");
   }
 }
 `
