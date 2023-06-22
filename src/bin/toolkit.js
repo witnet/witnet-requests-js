@@ -34,6 +34,7 @@ const toolkitFileNames = {
   darwin: (arch) => `witnet_toolkit-${version}-${arch}-apple-darwin`,
 }
 const archsMap = {
+  arm64: 'x86_64',
   x64: 'x86_64'
 }
 
