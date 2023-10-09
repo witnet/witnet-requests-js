@@ -21,7 +21,7 @@ const { exec } = require("child_process")
 /*
  Constants
  */
-const version = '1.6.5'
+const version = '1.6.7'
 const toolkitDownloadUrlBase = `https://github.com/witnet/witnet-rust/releases/download/${version}/`
 const toolkitDownloadNames = {
   win32: (arch) => `witnet_toolkit-${arch}-pc-windows-msvc.exe`,
