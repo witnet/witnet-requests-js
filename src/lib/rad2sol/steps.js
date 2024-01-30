@@ -1,10 +1,13 @@
-import * as Witnet from "../../..";
-import * as Babel from "@babel/core/lib/transform";
+import {
+  Disabled, isRoutedQuery, matchAll, simplifyName, sortObjectKeys
+} from "../../utils.js";
 import ProtoBuf from "protocol-buffers"
-import {Disabled, isRoutedQuery, matchAll, simplifyName, sortObjectKeys} from "../../utils";
 
-const witnetAddresses = require(`../../../assets/witnet.addresses`)
-const witnetSettings = require(`../../../assets/witnet.settings`)
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
+const witnetAddresses = require('../../../assets/witnet.addresses.json');
+import witnetSettings from '../../../assets/witnet.settings.js'
 
 const QUERIES_JSON_FILE_NAME = "witnet-queries.json"
 
@@ -80,17 +83,18 @@ export function loadSchema (fs, path, schemaDir, schemaName) {
 }
 
 export function compile (code) {
-  return Babel.transformSync(code,
-    {
-      "plugins": [
-        ["@babel/plugin-transform-modules-commonjs", {
-          "allowTopLevelThis": true,
-        }],
-      ],
-    }).code
+  // return Babel.transformSync(code,
+  //   {
+  //     "plugins": [
+  //       ["@babel/plugin-transform-modules-commonjs", {
+  //         "allowTopLevelThis": true,
+  //       }],
+  //     ],
+  //   }).code
+  return code
 }
 
-export function execute (code, queryName, dirName, vm) {
+export function execute (code, queryName, _dirName, vm) {
   const context = vm.createContext({
     module: {},
     exports: {},
@@ -98,7 +102,7 @@ export function execute (code, queryName, dirName, vm) {
       if (["witnet-requests", "witnet-request", "witnet"].includes(depName)) {
         return Witnet
       } else {
-        return require(depName)
+        return import(depName)
       }
     },
   });

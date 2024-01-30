@@ -1,5 +1,10 @@
-import {compile, execute, intoProtoBuf, intoSol, pack, readFile, writeSol} from "./steps";
-import {Disabled} from "../../utils";
+import {
+  compile, execute, intoProtoBuf, intoSol, pack, readFile, writeSol
+} from "./steps.js";
+
+import { 
+  Disabled 
+} from "../../utils.js";
 
 function readScript (fs) {
   return [

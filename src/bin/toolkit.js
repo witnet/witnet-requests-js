@@ -3,20 +3,21 @@
 /*
  Imports
  */
-import "core-js/stable"
-import "regenerator-runtime/runtime"
-import {loadSchema} from "../lib/rad2sol/steps";
-import {readCompileEncodeScript} from "../lib/rad2sol/scripts";
-const cbor = require('cbor')
-const fs = require('fs')
-const os = require('os')
-const path = require('path')
-const vm = require('vm')
-const readline = require('readline')
-const { Radon } = require('witnet-radon-js')
-const request = require('request')
-const { exec } = require("child_process")
+import {loadSchema} from "../lib/rad2sol/steps.js";
+import {readCompileEncodeScript} from "../lib/rad2sol/scripts.js";
 
+import cbor from 'cbor'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import vm from 'node:vm'
+import readline from 'node:readline'
+import { Radon } from 'witnet-radon-js'
+import request from 'request'
+import { exec } from 'node:child_process';
+import url from 'node:url';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 /*
  Constants

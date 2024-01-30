@@ -1,7 +1,10 @@
-import {graphQlSanitize, sortObjectKeys} from '../src/utils'
+import {
+  graphQlSanitize, 
+  sortObjectKeys
+} from '../src/utils.js';
 
 describe('utils', () => {
-  describe('graphQlSanitize', () => {
+  it('graphQlSanitize', () => {
     const input = "{\n      pair\t (id: \"0x81e11a9374033d11cc7e7485a7192ae37d0795d6\") {\n        token1Price\rtoken2Price      }"
     const expected = "{pair(id:\"0x81e11a9374033d11cc7e7485a7192ae37d0795d6\"){token1Price token2Price}"
     const result = graphQlSanitize(input)

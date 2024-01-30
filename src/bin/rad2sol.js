@@ -3,15 +3,17 @@
 import {readCompileEncodeWriteSolScript} from "../lib/rad2sol/scripts";
 import * as Utils from "../utils";
 
-const fs = require("fs");
-const glob = require("glob");
-const path = require("path");
-const vm = require("vm");
+import fs from "node:fs";
+import glob from "glob";
+import path from "node:path";
+import vm from "node:vm";
 
 const argv = Utils.processArgv(process.argv);
 const asPath = Utils.formatPath(path);
 
-const {fail, loadSchema, queriesBanner, queriesSucceed, writeMigrations, writeQueriesToJson} = require("../lib/rad2sol/steps");
+import {
+  fail, loadSchema, queriesBanner, queriesSucceed, writeMigrations, writeQueriesToJson
+} from "../lib/rad2sol/steps.js";
 
 const verbose = process.argv.includes('--verbose')
 

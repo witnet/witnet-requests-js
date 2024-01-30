@@ -1,19 +1,19 @@
 {
   "name": "witnet-requests",
   "version": "0.9.12",
+  "type": "module",
   "description": "Witnet Requests Lib",
-  "main": "dist/index.js",
   "repository": "https://github.com/witnet/witnet-requests-js",
   "author": "Witnet Foundation",
   "license": "MIT",
   "private": false,
   "files": [
     "assets/witnet.*",
-    "dist"
+    "src"
   ],
   "bin": {
-    "rad2sol": "dist/bin/rad2sol.js",
-    "witnet-toolkit": "dist/bin/toolkit.js"
+    "rad2sol": "src/bin/rad2sol.js",
+    "witnet-toolkit": "src/bin/toolkit.js"
   },
   "scripts": {
     "build": "babel src -d dist",
@@ -33,5 +33,8 @@
     "protocol-buffers": "^4.1.0",
     "request": "^2.88.2",
     "witnet-radon-js": "^0.8.4"
+  },
+  "exports": {
+    ".": "./src/index.js"
   }
 }

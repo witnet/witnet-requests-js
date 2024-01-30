@@ -1,6 +1,6 @@
-import { writeQueriesToJson } from '../../../src/lib/rad2sol/steps'
+import { writeQueriesToJson } from '../../../src/lib/rad2sol/steps.js'
 
-const path = require("path");
+import path from 'node:path'
 
 describe('writeQueriesToJson', () => {
   describe('when requests file does NOT exist', () => {
