@@ -14,9 +14,9 @@ describe('writeQueriesToJson', () => {
         }
       }
       const fsMock = {
-        existsSync: jest.fn(() => false),
-        writeFileSync: jest.fn(),
-        readFileSync: jest.fn()
+        existsSync: vi.fn(() => false),
+        writeFileSync: vi.fn(),
+        readFileSync: vi.fn()
       }
 
       writeQueriesToJson(fsMock, path, requests, './')
@@ -63,9 +63,9 @@ describe('writeQueriesToJson', () => {
         }
       }
       const fsMock = {
-        existsSync: jest.fn(() => true),
-        writeFileSync: jest.fn(),
-        readFileSync: jest.fn(() => JSON.stringify(oldRequests))
+        existsSync: vi.fn(() => true),
+        writeFileSync: vi.fn(),
+        readFileSync: vi.fn(() => JSON.stringify(oldRequests))
       }
 
       writeQueriesToJson(fsMock, path, newRequests, './')
@@ -113,9 +113,9 @@ describe('writeQueriesToJson', () => {
         }
       }
       const fsMock = {
-        existsSync: jest.fn(() => true),
-        writeFileSync: jest.fn(),
-        readFileSync: jest.fn(() => JSON.stringify(oldRequests))
+        existsSync: vi.fn(() => true),
+        writeFileSync: vi.fn(),
+        readFileSync: vi.fn(() => JSON.stringify(oldRequests))
       }
 
       writeQueriesToJson(fsMock, path, newRequests, './')
@@ -950,9 +950,9 @@ describe('writeQueriesToJson', () => {
       }
 
       const fsMock = {
-        existsSync: jest.fn(() => true),
-        writeFileSync: jest.fn(),
-        readFileSync: jest.fn(() => JSON.stringify(existingRequests))
+        existsSync: vi.fn(() => true),
+        writeFileSync: vi.fn(),
+        readFileSync: vi.fn(() => JSON.stringify(existingRequests))
       }
 
       writeQueriesToJson(fsMock, path, newRequests, './')
@@ -975,9 +975,9 @@ describe('writeQueriesToJson', () => {
         }
       }
       const fsMock = {
-        existsSync: jest.fn(() => false),
-        writeFileSync: jest.fn(),
-        readFileSync: jest.fn(() => '""')
+        existsSync: vi.fn(() => false),
+        writeFileSync: vi.fn(),
+        readFileSync: vi.fn(() => '""')
       }
 
       writeQueriesToJson(fsMock, path, requests, './')

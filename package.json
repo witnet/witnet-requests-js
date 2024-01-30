@@ -16,13 +16,10 @@
     "witnet-toolkit": "src/bin/toolkit.js"
   },
   "scripts": {
-    "build": "babel src -d dist",
-    "compile": "npm run build",
-    "prepare": "cp node_modules/witnet-solidity-bridge/migrations/witnet.* ./assets && npm run build",
-    "test": "jest"
+    "test": "vitest"
   },
   "devDependencies": {
-    "jest": "^28.1.0",
+    "vitest": "^1.2.2",
     "witnet-solidity-bridge": "^0.5.1"
   },
   "dependencies": {
