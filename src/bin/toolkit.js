@@ -6,7 +6,7 @@
 import {loadSchema} from "../lib/rad2sol/steps.js";
 import {readCompileEncodeScript} from "../lib/rad2sol/scripts.js";
 
-import cbor from 'cbor'
+import { decode } from 'cbor2';
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -225,7 +225,7 @@ async function forcedInstallCommand (settings) {
 function decodeFilters (mir) {
   return mir.map((filter) => {
     if (filter.args.length > 0) {
-      const decodedArgs = cbor.decode(Buffer.from(filter.args))
+      const decodedArgs = decode(Buffer.from(filter.args))
       return {...filter, args: decodedArgs}
     } else {
       return filter
@@ -236,7 +236,7 @@ function decodeFilters (mir) {
 function decodeScriptsAndArguments (mir) {
   let decoded = mir.data_request
   decoded.retrieve = decoded.retrieve.map((source) => {
-    const decodedScript = cbor.decode(Buffer.from(source.script))
+    const decodedScript = decode(Buffer.from(source.script))
     return {...source, script: decodedScript}
   })
   decoded.aggregate.filters = decodeFilters(decoded.aggregate.filters)

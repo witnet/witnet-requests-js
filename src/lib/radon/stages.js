@@ -1,7 +1,7 @@
-import * as CBOR from "cbor";
-import { Script } from "./script";
-import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "./types";
-import { graphQlSanitize } from "../../utils";
+import { encode } from 'cbor2';
+import { Script } from "./script.js";
+import { FILTERS, REDUCERS, RETRIEVAL_METHODS, TYPES } from "./types.js";
+import { graphQlSanitize } from "../../utils.js";
 
 class Source extends Script {
   constructor(kind, firstType) {
@@ -51,7 +51,7 @@ class Joiner {
       filters: this.filters.map(([op, ...raw_args]) => {
         let raw_args_len = raw_args.length;
         let args = raw_args_len > 0 ? raw_args_len > 1 ? raw_args : raw_args[0] : [];
-        return { op, args:  CBOR.encode(args) }
+        return { op, args:  encode(args) }
       }),
       reducer: this.reducer,
     }

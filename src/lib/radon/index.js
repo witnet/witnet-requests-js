@@ -1,5 +1,5 @@
-import { Request } from './request';
-import TYPES from './types';
+import { Request } from './request.js';
+import TYPES from './types.js';
 
 
 export default {

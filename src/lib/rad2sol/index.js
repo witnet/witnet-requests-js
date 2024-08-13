@@ -1,5 +1,5 @@
-import * as Scripts from "./scripts"
-import * as Steps from "./steps"
+import * as Scripts from "./scripts.js"
+import * as Steps from "./steps.js"
 
 export {
   Scripts,

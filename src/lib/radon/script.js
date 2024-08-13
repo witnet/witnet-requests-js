@@ -1,5 +1,5 @@
-import * as CBOR from "cbor";
-import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./types";
+import { encode } from 'cbor2';
+import {PSEUDOTYPES, typeFormat, TYPES, typeSystem} from "./types.js";
 
 function unpackArgs(args) {
   return args.map((arg) => {
@@ -72,7 +72,7 @@ class Script {
   }
 
   encode () {
-    return CBOR.encode(this.script)
+    return encode(this.script)
   }
 }
 

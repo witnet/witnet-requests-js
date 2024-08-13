@@ -1,4 +1,4 @@
-import {FILTERS, REDUCERS} from "./types";
+import {FILTERS, REDUCERS} from "./types.js";
 
 class Request {
   constructor () {
@@ -7,6 +7,8 @@ class Request {
         retrieve: [],
         aggregate: null,
         tally: null,
+        // This field is deprecated, it will default to 0 to be succesfully encoded
+        time_lock: 0,
       },
       value: 0,
       witnesses: 2,

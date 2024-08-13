@@ -1,7 +1,7 @@
-import { Script } from "./lib/radon/script"
-import { Aggregator, GraphQLSource, HttpGetSource, HttpPostSource, RandomSource, Tally } from "./lib/radon/stages"
-import { Request } from "./lib/radon/request"
-import * as Types from "./lib/radon/types"
+import { Script } from "./lib/radon/script.js"
+import { Aggregator, GraphQLSource, HttpGetSource, HttpPostSource, RandomSource, Tally } from "./lib/radon/stages.js"
+import { Request } from "./lib/radon/request.js"
+import * as Types from "./lib/radon/types.js"
 
 const TYPES = Types.TYPES;
 

@@ -23,7 +23,7 @@
     "witnet-solidity-bridge": "^0.5.1"
   },
   "dependencies": {
-    "cbor": "^9.0.1",
+    "cbor2": "^1.4.0",
     "core-js": "^3.35.1",
     "glob": "^10.3.10",
     "graphql-query-compress": "^1.2.4",
