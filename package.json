@@ -1,6 +1,6 @@
 {
   "name": "witnet-requests",
-  "version": "0.9.12",
+  "version": "0.9.13",
   "type": "module",
   "description": "Witnet Requests Lib",
   "repository": "https://github.com/witnet/witnet-requests-js",
